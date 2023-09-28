@@ -1,0 +1,16 @@
+# LaTeX intermediate files
+*.aux
+*.log
+*.synctex.gz
+*.bbl
+*.blg
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.brf
+latex-output/*
+
+# Ignore the template files
+*/cvpr2023-author_kit-v1_1-1/*
+
