@@ -1,12 +1,13 @@
-\documentclass[10pt,twocolumn,letterpaper]{article}
 % CVPR 2023 Paper Template
-% modified and extended by Stefan Roth (stefan.roth@NOSPAMtu-darmstadt.de)
 % based on the CVPR template provided by Ming-Ming Cheng (https://github.com/MCG-NKU/CVPR_Template)
+% modified and extended by Stefan Roth (stefan.roth@NOSPAMtu-darmstadt.de)
+
+\documentclass[10pt,twocolumn,letterpaper]{article}
 
 %%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
-% \usepackage[review]{cvpr}      % To produce the REVIEW version
-\usepackage{style/cvpr}              % To produce the CAMERA-READY version
-%\usepackage[pagenumbers]{cvpr} % To force page numbers, e.g. for an arXiv version
+% \usepackage[review]{style/cvpr}      % To produce the REVIEW version
+% \usepackage{style/cvpr}              % To produce the CAMERA-READY version
+\usepackage[pagenumbers]{style/cvpr} % To force page numbers, e.g. for an arXiv version
 
 % Include other packages here, before hyperref.
 \usepackage{graphicx}
@@ -20,7 +21,7 @@
 % Please disable hyperref *only* if you encounter grave issues, e.g. with the
 % file validation for the camera-ready version.
 %
-% If you comment hyperref and then uncomment iSt, you should delete
+% If you comment hyperref and then uncomment it, you should delete
 % ReviewTempalte.aux before re-running LaTeX.
 % (Or just hit 'q' on the first LaTeX run, let it finish, and you
 %  should be clear).
@@ -44,41 +45,54 @@
 \begin{document}
 
 %%%%%%%%% TITLE - PLEASE UPDATE
-\title{\LaTeX\ Author Guidelines for \confName~Proceedings}
+\title{Insert nice catchy title}
 
-\author{First Author\\
-Institution1\\
-Institution1 address\\
-{\tt\small firstauthor@i1.org}
+\author{Anita Dash\\
+MA20BTECH11001\\
 % For a paper whose authors are all at the same institution,
 % omit the following lines up until the closing ``}''.
 % Additional authors and addresses can be added with ``\and'',
 % just like the second author.
 % To save space, use either the email address or home page, not both
 \and
-Second Author\\
-Institution2\\
-First line of institution2 address\\
-{\tt\small secondauthor@i2.org}
+Dhruv Srikanth\\
+EE20BTECH11014\\
+\and
+Shambhu Prasad Kavir\\
+CS20BTECH11045\\
+\and
+Taha Adeel Mohammed\\
+CS20BTECH11052\\
 }
+
 \maketitle
 
 %%%%%%%%% ABSTRACT
-
 \begin{abstract}
-   The ABSTRACT is to be in fully justified italicized text, at the top of the left-hand column, below the author and affiliation information.
-   Use the word ``Abstract'' as the title, in 12-point Times, boldface type, centered relative to the column, initially capitalized.
-   The abstract is to be in 10-point, single-spaced type.
-   Leave two blank lines after the Abstract, then begin the main text.
-   Look at previous CVPR abstracts to get a feel for style and length.
+   Enter Abstract
 \end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+Give motivation, Application, What we intend to do
+\section{Problem Statement}
+Develop a deep learning-based system that can take a written text prompt and a sample of a person's handwriting style as input, and generate the text in the specified handwriting style as the output. The system should be able to accurately mimic the unique characteristics, nuances, and idiosyncrasies of the provided handwriting style while maintaining the readability and coherence of the generated text. The goal is to create a tool that can produce handwritten text in a personalized and natural manner, enabling applications such as handwritten letters, personalized messages, and artistic projects that require specific handwriting styles.
+\label{sec: PS}
+\section{Literature Review}
+\label{sec: Lit Rev}
+\noindent Voice to text paper \\
+Taha Paper \\
+Anita Paper \\
+Shambu Paper \\
+Dhruv Paper \\
+Image to stroke paper 
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 \label{sec:intro}
 
 Please follow the steps outlined below when submitting your manuscript to the IEEE Computer Society Press.
-This style guide now has several important modifications (for example, you are no longer warned against the use of sticky tape to attach your artwork to the paper), so all authors should read this new version. 
+This style guide now has several important modifications (for example, you are no longer warned against the use of sticky tape to attach your artwork to the paper), so all authors should read this new version.
 
 %-------------------------------------------------------------------------
 \subsection{Language}
@@ -160,7 +174,7 @@ An example of a bad paper just asking to be rejected:
 \end{center}
 
    In this paper we present a performance analysis of our previous paper [1], and show it to be inferior to all previously known methods.
-   Why the previous paper was accepted without this analysis is beyond me.Authors14
+   Why the previous paper was accepted without this analysis is beyond me.
 
    [1] Removed for blind review
 \end{quote}
