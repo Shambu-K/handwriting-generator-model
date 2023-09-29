@@ -69,7 +69,7 @@ CS20BTECH11052\\
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-   Enter Abstract
+   Handwriting style transfer for personalized text generation is a fascinating and evolving field that sits at the intersection of computer vision and natural language processing. It has several applications in various domains, ranging from enhancing digital communication and marketing to fostering creativity in art and design, and from improving accessibility and education to preserving historical documents and providing unique customization in merchandise and entertainment. In this project, we aim to create a system that takes a written text prompt and a sample of a person's or a specific handwriting style's characteristics as input and generates text that closely resembles the provided style while maintaining readability and coherence.
 \end{abstract}
 
 \section{Introduction}
@@ -80,12 +80,23 @@ Develop a deep learning-based system that can take a written text prompt and a s
 \label{sec: PS}
 \section{Literature Review}
 \label{sec: Lit Rev}
-\noindent Voice to text paper \\
-Taha Paper \\
-Anita Paper \\
-Shambu Paper \\
-Dhruv Paper \\
-Image to stroke paper 
+\noindent \textbf{Voice to text paper} \\
+\textbf{Taha Paper} \\
+\textbf{Anita Paper} \\
+Earlier Handwriting generative methods process style and features separately. It doesn't encode style content entangelement at a character level. In this paper the authors propose a transformer-based styled handwritten text image generation approach, HWT, that strives to learn both style-content entanglement as well as global (such as ink width, slant) and local (such as character style, ligatures) writing style patterns. The overall architecture has four components: 
+\begin{itemize}
+  \item Conditional Generator : Synthesize handwritten text.
+  \item Discriminator: Ensures realistic generation of handwriting styles. It is designed to be convolutional in nature
+  \item Recognizer: Aids in textual content preservation. It is inspired by CRNN
+  \item Style Classifier: Ensures satisfactory transfer of calligraphic styles.
+\end{itemize}
+
+\noindent In the paper, the focus of the design is in the generator model. To imitate a handwritting style as realistically as possible, This model is designed to learn style content entaglement as well as local and global style patterns.  It is a transformer-based generative network for unconstrained styled handwritten text image generation.  It has two main components an encoder network and a decoder network.  Both the encoder and decoder networks constitute a hybrid design based on convolution and multi-head self-attention networks.
+
+\noindent HWT generates realistic styled handwritten text images and significantly outperforms other state-of-the-art models through extensive qualitative, quantitative and human based evaluations. The model also generalizes well to the challenging scenarios where both words and writing style are unseen during training, generating realistic styled handwritten text images  \\
+\textbf{Shambu Paper} \\
+\textbf{Dhruv Paper} \\
+\textbf{Image to stroke paper} 
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
