@@ -16,11 +16,6 @@
 \usepackage{booktabs}
 
 
-% It is strongly recommended to use hyperref, especially for the review version.
-% hyperref with option pagebackref eases the reviewers' job.
-% Please disable hyperref *only* if you encounter grave issues, e.g. with the
-% file validation for the camera-ready version.
-%
 % If you comment hyperref and then uncomment it, you should delete
 % ReviewTempalte.aux before re-running LaTeX.
 % (Or just hit 'q' on the first LaTeX run, let it finish, and you
@@ -44,16 +39,10 @@
 
 \begin{document}
 
-%%%%%%%%% TITLE - PLEASE UPDATE
-\title{Insert nice catchy title}
+\title{Handwriting Generation and Animation with Deep Learning}
 
 \author{Anita Dash\\
 MA20BTECH11001\\
-% For a paper whose authors are all at the same institution,
-% omit the following lines up until the closing ``}''.
-% Additional authors and addresses can be added with ``\and'',
-% just like the second author.
-% To save space, use either the email address or home page, not both
 \and
 Dhruv Srikanth\\
 EE20BTECH11014\\
@@ -69,21 +58,34 @@ CS20BTECH11052\\
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-   Handwriting style transfer for personalized text generation is a fascinating and evolving field that sits at the intersection of computer vision and natural language processing. It has several applications in various domains, ranging from enhancing digital communication and marketing to fostering creativity in art and design, and from improving accessibility and education to preserving historical documents and providing unique customization in merchandise and entertainment. In this project, we aim to create a system that takes a written text prompt and a sample of a person's or a specific handwriting style's characteristics as input and generates text that closely resembles the provided style while maintaining readability and coherence.
+   Handwriting style transfer for personalized text generation is a fascinating and evolving field that sits at the intersection of computer vision and natural language processing. It has several applications in various domains, ranging from enhancing digital communication and marketing to fostering creativity in art and design, and from improving accessibility and education to preserving historical documents and providing unique customization in merchandise and entertainment. In this project, we aim to create a system that takes a written text prompt and a sample of a person's or a specific handwriting style's characteristics as input and generates text and a sequence of brush strokes that closely resembles the provided style while maintaining readability and coherence.
 \end{abstract}
+
 
 \section{Introduction}
 \label{sec:introduction}
-Give motivation, Application, What we intend to do
+% intro, motivation
+Handwriting is a deeply personal and authentic form of expression. It holds a unique place in human communication and self-expression. In this regard, Handwriting Style Transfer can come in handy. A model that generates handwritten text in a particular style can be helpful in the following fields
+\begin{itemize}
+    \item In education, personalized handwritten materials can improve student engagement and retention, offering educators a powerful tool to make learning more effective and enjoyable.
+    \item Handwriting style transfer can improve accessibility for individuals with motor disabilities, allowing them to convey their thoughts and emotions through personalized handwriting styles, promoting inclusivity in communication.
+    \item Handwritten image generation can also provide additional data to train more accurate general handwriting recognition models 
+    \item It can help in the field of forensic analysis such as forgery detection, document authentication etc.
+    \item Businesses can leverage personalized handwriting in marketing materials, enhancing customer engagement, and creating memorable brand experiences.
+\end{itemize}
+
+% the model
+% base model
 \section{Problem Statement}
-Develop a deep learning-based system that can take a written text prompt and a sample of a person's handwriting style as input, and generate the text in the specified handwriting style as the output. The system should be able to accurately mimic the unique characteristics, nuances, and idiosyncrasies of the provided handwriting style while maintaining the readability and coherence of the generated text. The goal is to create a tool that can produce handwritten text in a personalized and natural manner, enabling applications such as handwritten letters, personalized messages, and artistic projects that require specific handwriting styles.
+Implement a deep learning model that can take a text prompt and a sample image of a person's handwriting style as input, and generate the image of the text prompt, along with the temporal sequence of brush strokes, in the specified handwriting style as the output. We want the model to accurately mimic the unique characteristics, nuances, and idiosyncrasies of the provided handwriting style while maintaining the readability and coherence of the generated text. 
 \label{sec: PS}
 \section{Literature Review}
 \label{sec: Lit Rev}
-\noindent \textbf{Voice to text paper} \\
-\textbf{Taha Paper} \\
-\textbf{Anita Paper} \\
-Earlier Handwriting generative methods process style and features separately. It doesn't encode style content entangelement at a character level. In this paper the authors propose a transformer-based styled handwritten text image generation approach, HWT, that strives to learn both style-content entanglement as well as global (such as ink width, slant) and local (such as character style, ligatures) writing style patterns. The overall architecture has four components: 
+\subsection{GANwriting}
+\label{subsec: GANWriting}
+\subsection{Handwriting Transformers}
+\label{subsec: HWT}
+Earlier Handwriting generative methods process style and features separately. It doesn't encode style content entangelement at a character level. In this paper ~\cite{HWT}. the authors propose a transformer-based styled handwritten text image generation approach, HWT, that strives to learn both style-content entanglement as well as global (such as ink width, slant) and local (such as character style, ligatures) writing style patterns. The overall architecture has four components: 
 \begin{itemize}
   \item Conditional Generator : Synthesize handwritten text.
   \item Discriminator: Ensures realistic generation of handwriting styles. It is designed to be convolutional in nature
@@ -91,12 +93,25 @@ Earlier Handwriting generative methods process style and features separately. It
   \item Style Classifier: Ensures satisfactory transfer of calligraphic styles.
 \end{itemize}
 
-\noindent In the paper, the focus of the design is in the generator model. To imitate a handwritting style as realistically as possible, This model is designed to learn style content entaglement as well as local and global style patterns.  It is a transformer-based generative network for unconstrained styled handwritten text image generation.  It has two main components an encoder network and a decoder network.  Both the encoder and decoder networks constitute a hybrid design based on convolution and multi-head self-attention networks.
+In the paper, the focus of the design is in the generator model. To imitate a handwritting style as realistically as possible, This model is designed to learn style content entaglement as well as local and global style patterns.  It is a transformer-based generative network for unconstrained styled handwritten text image generation.  It has two main components an encoder network and a decoder network.  Both the encoder and decoder networks constitute a hybrid design based on convolution and multi-head self-attention networks.
 
-\noindent HWT generates realistic styled handwritten text images and significantly outperforms other state-of-the-art models through extensive qualitative, quantitative and human based evaluations. The model also generalizes well to the challenging scenarios where both words and writing style are unseen during training, generating realistic styled handwritten text images  \\
-\textbf{Shambu Paper} \\
-\textbf{Dhruv Paper} \\
-\textbf{Image to stroke paper} 
+HWT generates realistic styled handwritten text images and significantly outperforms other state-of-the-art models through extensive qualitative, quantitative and human based evaluations. The model also generalizes well to the challenging scenarios where both words and writing style are unseen during training, generating realistic styled handwritten text images  \\
+\subsection{Decoupled Style Descriptors} 
+\label{subsec: Brush Paper}
+\subsection{Dynamically configurable CRNN}
+\label{subsec: CRNN}
+\subsection{Handwriting Trajectory Recovery}
+\label{subsec: img2stroke}
+\subsection{Domain-Adversarial Neural Network}
+\label{subsec: DANN}
+~\cite{DANN} DANN (Domain-Adversarial Neural Network) is an interesting architecture that we believe, could be utilized in the problem of specific-style handwriting generation. DANN is an improvement to any regular network structure due to its parallel branch.
+
+Given a Neural Network performing a downstream task on a given dataset, the output of the penultimate layer is considered the final representation of the input data. On this representation, we apply our last layer which is the downstream task itself but the more interesting part is the learnt representation. We claim that with enough training, this penultimate layer output is the best possible latent space representation of the data distribution possessing the information required to perform a downstream task. The nature of Deep Learning makes it so that we can never truly know the kind of correlations the model has learnt from the input data and how the information is being represented but we know that the information required for the downstream task is somehow contained in the representation. If the existence of a downstream task and its loss function controls the information present in the representation, then if we want to include or exclude further information from the representation, all we need to do is have a parallel branch of the neural network performing that downstream task on the representation. When we consider the loss of this new branch downstream task while updating our representation-learning, the learnt representation now possesses or is independent of information regarding this task.
+
+For example, if we had images of X-Rays of a human body part and we had to determine if the subject is fractured or not, our primary downstream task would be to classify the image as fractured or not. But if we have labels as to what part of the human body is present in the image, then we can ensure that our representation learns features of the image that are independent of whether the subject is a hand or a leg. This can be implemented by having a parallel downstream task on the representation that classifies the image as being an X-Ray of a hand or an X-Ray of a leg. Next, we subtract the loss of this classifier for the representation-learning layers. Thus, the model is forced to get worse at identifying whether the subject in the image is a hand or a leg making its learnt representation independent (but aware) of this information and only focussed on whether the subject is fractured or not.
+
+Thus, this architecture allows us to hand-pick the kind of information we want to be depicted in the model's latent space representation of the data by making the model either improve or become worse at a parallel task involving correlated information. This architecture was originally proposed for use in the biomedical space but we believe that style transfer problems too could benefit from such an architecture due to the requirement of considering handwriting style information and character information distinctly. If we are able to isolate the style information from the character information completely giving the model a better empirical understanding of the handwriting style itself, this may improve our ability to generate better handwriting samples.
+
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
