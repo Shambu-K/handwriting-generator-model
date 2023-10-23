@@ -331,7 +331,7 @@ We use a batch size of 8, i.e. we get 8 writer styles per page. The prompt used 
 \section{Preliminary Results}
 The HWT model used to replicate the results in the previous section is trained on the IAM dataset \cite{IAM} and only accepts segmented word images from the target writer as the style input. We build on this model's testing to accept a text prompt and a sample of the handwriting to mimic from any writer, no longer constrained to belong to the IAM dataset. This demo code to perform custom testing can be viewed \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here.}
 
-Furthermore, we developed \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/para_to_words.ipynb}{\texttt{para\_to\_word.ipynb}}, which extracts the segmented word bounding boxes from a given paragraph image. This is done by using the OpenCV library, and using its functionality to find the contours in the image. We then cluster the nearby contours together to form the word bounding boxes. These word bounding boxes can then be fed into the HWT model to generate the desired output. Hence we are able to use a paragraph image as the input to the HWT model, instead of a single word images. Below we show a sample word extraction from a paragraph image. 
+Furthermore, we developed \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/para_to_words.ipynb}{\texttt{para\_to\_word.ipynb}}, which extracts the segmented word bounding boxes from a given paragraph image. This is done by using the OpenCV library, and using its functionality to find the contours in the image. We then cluster the nearby contours together to form the word bounding boxes. These word bounding boxes can then be fed into the HWT model to generate the desired output. Hence we are able to use a paragraph image as the input to the HWT model, instead of a single word images. In Fig. \ref{fig:bb} we show a sample word extraction from a paragraph image. 
 % Bounding Boxes
 \begin{figure}[h]
   \centering
@@ -409,7 +409,7 @@ Furthermore, we developed \href{https://github.com/Shambu-K/handwriting-generato
   \label{fig:Writers}
 \end{figure}
 
-Using above functionality, we run the model on handwritings of the authors of this report, and successfully mimic their style on our text promt, as shown in \ref{fig:Writers} 
+Using above functionality, we run the model on handwritings of the authors of this report, and successfully mimic their style on our text promt, as shown in Fig. \ref{fig:Writers} 
 
 %%%%%%%%% REFERENCES
 {\small
