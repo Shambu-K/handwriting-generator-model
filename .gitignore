@@ -14,3 +14,7 @@ latex-output/*
 # Ignore the template files
 */cvpr2023-author_kit-v1_1-1/*
 
+# Data files
+Handwriting-Transformers
+demo_output
+DataSet
