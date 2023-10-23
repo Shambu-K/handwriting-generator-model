@@ -182,7 +182,15 @@ Thus, this architecture allows us to hand-pick the kind of information we want t
 Add Info
 
 \section{Replicated Results}
-Explain why we picked HWT Transformers, Compare handwriting outputs
+
+GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesnt encode style content entanglement at a character level and hence struggles to mimic character specific styles.\\
+
+*insert input and output image of GANwriting output*\\
+
+While Decoupled Style Descriptors \cite{BRUSH-paper} is able to capture local and global style patterns, it fails to generate legible letters or connect cursive letters. This is because of the underlying inconsistencies in human writing, which is only partially addressed in this model. Additionally, the model works with online handwriting data and we want to capture the styles of offline handwriting.\\
+Handwriting Transformers \cite{HWT} is able to generate realistic styled handwritten text images and significantly outperforms other state-of-the-art models. It handles variable length input and captures local and global style patterns. It is also compatible with offline handwriting data. Hence we have decided to use this model as our base model.\\
+
+*insert input and output image of HWT output*\\
 \subsection{FID Scores}
 Explanation of FID scores
 Add results
