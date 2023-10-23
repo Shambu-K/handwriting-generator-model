@@ -311,7 +311,7 @@ The third loss component is a cross-entropy classification loss defined by the s
 \end{figure}
 
 \section{Testing on IAM-Dataset}
-We test the Handwriting Transformers model on the IAM dataset. We feed the IAM dataset as input to the model with pretrained weights, and generate images in the handwriting styles of the writers in the IAM dataset, on which the model was originally trained. 
+We test the Handwriting Transformers model on the IAM dataset \cite{IAM}. We feed the IAM dataset as input to the model with pretrained weights, and generate images in the handwriting styles of the writers in the IAM dataset, on which the model was originally trained. 
 % add image
 \begin{figure}[h]
   \centering
@@ -327,9 +327,7 @@ We test the Handwriting Transformers model on the IAM dataset. We feed the IAM d
   \label{fig:IAM-test2}
 \end{figure} \\
 We use a batch size of 8, i.e. we get 8 writer styles per page. The prompt used was \emph{Magic madness heaven sin Saw you there and I thought}. We can observe that the model is able to generate quite realistic images, capturing both global and local style patterns. The code for generating images, and more such examples, can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here}.
-
 \\
-
 \section{Preliminary Results}
 The HWT model used to replicate the results in the previous section is trained on the IAM dataset \cite{IAM} and only accepts segmented word images from the target writer as the style input. We build on this model's testing to accept a text prompt and a sample of the handwriting to mimic from any writer, no longer constrained to belong to the IAM dataset. This demo code to perform custom testing can be viewed \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here.}
 
