@@ -189,14 +189,11 @@ The main complexity of such a problem has been described as the interpolation of
 \section{Our approach}
 Our final desired output is a series of points describing the trajectory of the generated handwriting. For this, cRNN models such as \cite{crnn,BRUSH-paper}, which predict the next point in a sequence, given the earlier points, directly produce our desired output. However, recently, there have been better state-of-the-art models for handwriting generation, such as \cite{HWT}, which use transformers. Hence we use the HWT model\cite{HWT} as our base model to generate the image of the text prompt in the specified handwriting style. We then use a handwriting trajectory recovery model \cite{image2stroke-1Char,img2stroke-multichar} to recover the trajectory of the generated handwriting. Hence we are able to get more realistic animated handwritten text in the specified handwriting style, as opposed to directly using the output of cRNN models.\\
 
-\section{Architecture Overview}
-
 \section{Replicated Results}
-We have replicated the results of the HWT model \cite{HWT}, Decoupled Style Descriptors \cite{BRUSH-paper}, and GANwriting \cite{GAN-1} models based on the papers and the code provided by the authors. Below we compare these three models based on the replicated outputs we got and the FID scores we computed.
+We have replicated the results of the HWT model \cite{HWT}, Decoupled Style Descriptors \cite{BRUSH-paper}, and GANwriting \cite{GAN-1} models based on the papers and the code provided by the authors. Below we compare these three models.
 
 \subsection*{GAN Writing}
 
-\vspace*{-6mm}
 \begin{figure}[h]
   \centering
   \begin{subfigure}[b]{0.4\textwidth}
@@ -214,35 +211,13 @@ We have replicated the results of the HWT model \cite{HWT}, Decoupled Style Desc
   \label{fig:GAN}
 \end{figure}
 
-\vspace*{-2mm}
-GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesn't encode style content entanglement at a character level and hence struggles to mimic character specific styles.
-
+GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesn't encode style content entanglement at a character level and hence struggles to mimic character specific styles. Fig.\ref{fig:GAN} tests the model on the given desired style.\\
 
 \subsection*{Decoupled Style Descriptors}
-
-\vspace*{-6mm}
-\begin{figure}[h]
-  \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{../latex-src/Images/Gan-Input1.png}
-    \caption{\textbf{Desired Handwriting}}
-    \label{fig:HWT-input}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{../latex-src/Images/HWT-Output1.png}
-    \caption{\textbf{HWT}}
-    \label{fig:HWT-output}
-  \end{subfigure}
-  \caption{{CHANGE TO STYLE DESCRIPTOR OUTPUT.}}
-  \label{fig:HWT}
-\end{figure}
-
-While Decoupled Style Descriptors \cite{BRUSH-paper} is able to capture local and global style patterns, it fails to generate legible letters or connect cursive letters. This is because of the underlying inconsistencies in human writing, which is only partially addressed in this model. Additionally, the model works with online handwriting data and we want to capture the styles of offline handwriting.
+According to \cite{BRUSH-paper} Decoupled Style Descriptors is able to capture local and global style patterns, it fails to generate legible letters or connect cursive letters. This is because of the underlying inconsistencies in human writing, which is only partially addressed in this model. Additionally, the model works with online handwriting data and we want to capture the styles of offline handwriting.\\
 
 \subsection*{Handwriting Transformers}
 
-\vspace*{-6mm}
 \begin{figure}[h]
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
@@ -260,11 +235,9 @@ While Decoupled Style Descriptors \cite{BRUSH-paper} is able to capture local an
   \label{fig:HWT}
 \end{figure}
 
-\vspace*{-2mm}
-The Handwriting Transformers model \cite{HWT} is able to generate realistic styled handwritten text images and significantly outperforms other state-of-the-art models. It handles variable length input and captures local and global style patterns. It is also compatible with offline handwriting data. Hence we have decided to use this model as our base model.\\
+The Handwriting Transformers model \cite{HWT} is able to generate realistic styled handwritten text images and significantly outperforms other state-of-the-art models. It handles variable length input and captures local and global style patterns. It is also compatible with offline handwriting data. Hence we have decided to use this model as our base model. Fig.\ref{fig:HWT} tests the model on the given desired style.\\
 
-
-\subsection{FID Scores}
+\subsection*{FID Scores}
 
 The Fréchet Inception Distance (FID) is a metric used to evaluate the quality of generated images. The FID score is the Frechet Distance between the distribution of the real images and the distribution of the generated images. The lower the FID score, the better the quality of the generated images. A score close to zero implies that the two groups of images are nearly identical. 
 
@@ -311,8 +284,42 @@ While the size of the datasets used here was rather small, we can still observe 
 \end{table} \\
 We again observe that the HWT model has a lower FID score than the other models.
 The code for the above test can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/compute-fid-hwt.ipynb}{here}.
-\subsection{Testing on IAM-Dataset}
-Add results
+
+\section{Architecture Overview}
+
+
+\section{Testing on IAM-Dataset}
+We test the Handwriting Transformers model on the IAM dataset. We feed the IAM dataset as input to the model with pretrained weights, and generate images in the handwriting styles of the writers in the IAM dataset, on which the model was originally trained. 
+% add image
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{../latex-src/Images/IAM-test1.png}
+  \caption{Example-1}
+  \label{fig:IAM-test}
+\end{figure}
+% add another image
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{../latex-src/Images/IAM-test2.png}
+  \caption{Example-2}
+  \label{fig:IAM-test2}
+\end{figure}
+
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.45\textwidth]{../latex-src/Images/IAM-test3.png}
+%   \caption{Example-3}
+%   \label{fig:IAM-test3}
+% \end{figure}
+
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.45\textwidth]{../latex-src/Images/IAM-test4.png}
+%   \caption{Example-4}
+%   \label{fig:IAM-test4}
+% \end{figure}
+We can observe that the model is able to generate quite realistic images, capturing both global and local style patterns. The code for generating images, and more such examples, can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here}.
+
 \section{Preliminary Results}
 
 \begin{figure}[h]
