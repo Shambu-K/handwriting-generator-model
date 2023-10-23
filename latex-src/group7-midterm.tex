@@ -20,7 +20,7 @@
 % ReviewTempalte.aux before re-running LaTeX.
 % (Or just hit 'q' on the first LaTeX run, let it finish, and you
 %  should be clear).
-\usepackage[pagebackref,breaklinks,colorlinks]{hyperref}
+\usepackage[]{hyperref}
 
 % Support for easy cross-referencing
 \usepackage[capitalize]{cleveref}
@@ -174,34 +174,38 @@ Implement a deep learning model that can take a text prompt and a sample image o
 ,\vspace*{-1em}
 
 \subsection*{Midterm Report Literature Review}
-\subsection{Writing Order Recovery}
-Writing order recovery is a complex problem that relates to the intrinsic properties of human handwriting. However, integrating its solution with an observed handwritten text could tell us more about a subject's characteristic handwriting than ever before. This paper \cite{WOR} proposes an innovative deterministic algorithm to recover the writing order of any thinned long static handwritten signature. Signatures have been chosen out of the belief that they are the most complex version of this problem.
+% \subsection{Stroke Separation \& Writing Order Recovery}
+\subsection{Writing Order Recovery\cite{WOR}}
+Writing order recovery is a complex problem that relates to the intrinsic properties of human handwriting. This paper \cite{WOR} proposes an innovative deterministic algorithm to recover the writing order of any thinned long static handwritten signature. Signatures have been chosen out of the belief that they are the most complex version of this problem.
 
 The proposed method is completely intuitive and draws from the good continuity criteria of handwriting. The process of recovery has been split into 3 subprocesses - point classification, local examination, and global reconstruction.
 Strokes are believed to be entirely continuous so the authors have observed the 8-connected pixels, adjacent pixels surrounding a target pixel, to observe the target pixel's position within a stroke. A pixel with 2 connected pixels is believed to be a trace-point, one of the points along the trajectory of a stroke. A point with only 1 connected pixel is believed to be an end-point of a stroke. Any point with more than 2 connected pixels is believed to be a cluster point, a point found in the region of overlap between 2 distinct strokes/components.
 After this classification, the next step is described as local examination. Adjacent trace points are considered to be part of one stroke and hence form large groups reconstructing the strokes from an end-point, through trace-points, to another end-point. The only complexity remaining at this stage is that of overlapping strokes forming clusters. Branches exiting clusters are marked with anchor points and their exit angles are measured and characterized. The authors define a few commonly occurring cluster scenarios and match the present observed cluster to the predefined scenarios.
 In the global reconstruction stage, clusters are resolved by modelling the rapid change in direction (from branch angle and position) as energy alongside assigning priority to each branch and each scenario to perform energy minimization. After the internal cluster paths are separated, the authors use a Gaussian spread formulation to choose the leftmost starting point of a stroke and use a proximity criterion to connect a pen-up point to the next pen-down point thus deriving the order of strokes/components.
 
-The main complexity of such a problem has been described as the interpolation of pen-up and pen-down amidst strokes causing distinct strokes and consequently their overlap. The solution proposed to this problem is intuitive and replicative of a human thought process which is why it captured our attention. Obtaining the temporal properties has been left as a future problem that could, in their opinion, aid more significantly in the field of handwriting recognition, analysis, and generation.
+The main complexity of such a problem has been described as the interpolation of pen-up and pen-down amidst strokes causing distinct strokes and consequently their overlap. The solution proposed to this problem is intuitive and replicative of a human thought process which is why it captured our attention.
 
+% \subsection{DL paper on trajectory recovery}
 \section{Our approach}
-Our final desired output is a series of points describing the trajectory of the generated handwriting. For this, cRNN models such as \cite{crnn,BRUSH-paper}, which predict the next point in a sequence, given the earlier points, directly produce our desired output. However, recently, there have been better state-of-the-art models for handwriting generation, such as \cite{HWT}, which use transformers. Hence we use the HWT model\cite{HWT} as our base model to generate the image of the text prompt in the specified handwriting style. We then use a handwriting trajectory recovery model \cite{image2stroke-1Char,img2stroke-multichar} to recover the trajectory of the generated handwriting. Hence we are able to get more realistic animated handwritten text in the specified handwriting style as opposed to directly using the output of cRNN models.
+Our final desired output is a series of points describing the trajectory of the generated handwriting. For this, cRNN models such as \cite{crnn,BRUSH-paper}, which predict the next point in a sequence, given the earlier points, directly produce our desired output. However, recently, there have been better state-of-the-art models for handwriting generation, such as \cite{HWT}, which use transformers. Hence we use the HWT model\cite{HWT} as our base model to generate the image of the text prompt in the specified handwriting style. We then use a handwriting trajectory recovery model \cite{image2stroke-1Char,img2stroke-multichar} to recover the trajectory of the generated handwriting. Hence we are able to get more realistic animated handwritten text in the specified handwriting style, as opposed to directly using the output of cRNN models.\\
 
 \section{Architecture Overview}
 
 \section{Replicated Results}
+We have replicated the results of the HWT model \cite{HWT}, Decoupled Style Descriptors \cite{BRUSH-paper}, and GANwriting \cite{GAN-1} models based on the papers and the code provided by the authors. Below we compare these three models based on the replicated outputs we got and the FID scores we computed.
 
-GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesn't encode style content entanglement at a character level and hence struggles to mimic character specific styles. Fig.\ref{fig:GAN} shows the models performance on a desired handwriting style.\\
+\subsection*{GAN Writing}
 
+\vspace*{-6mm}
 \begin{figure}[h]
   \centering
-  \begin{subfigure}[b]{0.45\textwidth}
+  \begin{subfigure}[b]{0.4\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/Gan-Input1.png}
     \caption{\textbf{Desired Handwriting}}
     \label{fig:GAN-input}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[b]{0.45\textwidth}
+  \begin{subfigure}[b]{0.4\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/Gan-Output1.png}
     \caption{\textbf{GANwriting}}
     \label{fig:GAN-output}
@@ -210,10 +214,35 @@ GANwriting \cite{GAN-1} is limited to generating singular words, and as a result
   \label{fig:GAN}
 \end{figure}
 
+\vspace*{-2mm}
+GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesn't encode style content entanglement at a character level and hence struggles to mimic character specific styles.
+
+
+\subsection*{Decoupled Style Descriptors}
+
+\vspace*{-6mm}
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/Gan-Input1.png}
+    \caption{\textbf{Desired Handwriting}}
+    \label{fig:HWT-input}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/HWT-Output1.png}
+    \caption{\textbf{HWT}}
+    \label{fig:HWT-output}
+  \end{subfigure}
+  \caption{{CHANGE TO STYLE DESCRIPTOR OUTPUT.}}
+  \label{fig:HWT}
+\end{figure}
+
 While Decoupled Style Descriptors \cite{BRUSH-paper} is able to capture local and global style patterns, it fails to generate legible letters or connect cursive letters. This is because of the underlying inconsistencies in human writing, which is only partially addressed in this model. Additionally, the model works with online handwriting data and we want to capture the styles of offline handwriting.
 
-Handwriting Transformers \cite{HWT} is able to generate realistic styled handwritten text images and significantly outperforms other state-of-the-art models. It handles variable length input and captures local and global style patterns. It is also compatible with offline handwriting data. Hence we have decided to use this model as our base model. Fig.\ref{fig:HWT} shows the models performance on a desired handwriting style.\\
+\subsection*{Handwriting Transformers}
 
+\vspace*{-6mm}
 \begin{figure}[h]
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
@@ -230,9 +259,19 @@ Handwriting Transformers \cite{HWT} is able to generate realistic styled handwri
   \caption{{HWT is able to generate the entire line of text. It also captures the local and global style of the text.}}
   \label{fig:HWT}
 \end{figure}
+
+\vspace*{-2mm}
+The Handwriting Transformers model \cite{HWT} is able to generate realistic styled handwritten text images and significantly outperforms other state-of-the-art models. It handles variable length input and captures local and global style patterns. It is also compatible with offline handwriting data. Hence we have decided to use this model as our base model.\\
+
+
 \subsection{FID Scores}
-The Fréchet Inception Distance (FID) is a metric used to evaluate the quality of generated images. It is based on the Inception Score (IS) and the Frechet Distance (FD).It is a metric that measures the similarity between two distributions. The FID score is the Frechet Distance between the distribution of the real images and the distribution of the generated images. The lower the FID score, the better the quality of the generated images. A score close to zero implies that the two groups of images are nearly identical. \newline
-\newline
+
+The Fréchet Inception Distance (FID) is a metric used to evaluate the quality of generated images. The FID score is the Frechet Distance between the distribution of the real images and the distribution of the generated images. The lower the FID score, the better the quality of the generated images. A score close to zero implies that the two groups of images are nearly identical. 
+
+The IAM dataset \cite{IAM} is used to compute the FID scores. The IAM dataset contains 1,539 pages of scanned text from 657 writers. We compute the score between the generated images and the real images from the IAM dataset.\\
+
+
+
 % \href{as}{https://github.com/Shambu-K/handwriting-generator-model/blob/main/Comparison%20of%20models/compare_fid.ipynb}
 \textbf{Table 1: Comparison of HWT\cite{HWT} with GANwriting\cite{GAN-1} model}
  with respect to their FID scores computed between the generated text images and the real text images from the IAM dataset. We generate datasets of 6 images each for both the models. The FID score for the HWT model is lower than that of the GANwriting model implying that the former generates better quality images than the latter.
@@ -250,9 +289,11 @@ The Fréchet Inception Distance (FID) is a metric used to evaluate the quality o
   \end{center}
 % \caption{FID scores for HWT and GANwriting models}
 \end{table}\\
-While the size of the datasets used here was rather small, we can still observe that the HWT model generates better quality images than the GANwriting model. This is because the HWT model is able to capture the local and global style patterns of the text, while the GANwriting model is not. The purpose of this test was only to attest what was already proven in the papers. The code for the above test can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/Comparison%20of%20models/compare_fid.ipynb}{here}.
+While the size of the datasets used here was rather small, we can still observe that the HWT model generates better quality images than the GANwriting model. This is because the HWT model is able to capture the local and global style patterns of the text, while the GANwriting model is not. The purpose of this test was only to attest what was already shown in the papers. The code for the above test can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/Comparison%20of%20models/compare_fid.ipynb}{here}.
 \newline
-\textbf{Table 2: Comparison of HWT \cite{HWT} model with ScrabbleGAN \cite{fogel2020scrabblegan} and Davis et al \cite{davis2020text}} with respect to their FID scores. We generate a dataset of 10,000 images for the HWT model and then compute its FID score. For the other models, we take the FID scores as mentioned in the paper \cite{HWT}. Once again, we observe that the HWT model has a lower FID score than the other models. 
+
+\noindent
+\textbf{Table 2: Comparison of HWT model with ScrabbleGAN and Davis et al} with respect to their FID scores. We generate a dataset of 10,000 images for the HWT model and then compute its FID score. For the other models, we take the FID scores as mentioned in the paper \cite{HWT}. Once again, we observe that the HWT model has a lower FID score than the other models. 
 \begin{table}[h]
   \begin{center}
     \begin{tabular}{|c|c|}
@@ -268,7 +309,7 @@ While the size of the datasets used here was rather small, we can still observe 
     \end{tabular}
   \end{center}
 \end{table} \\
-Since we have used a significantly smaller dataset for computing the FID score for the HWT model, the results may not be entirely accurate. However, we can still observe that the HWT model has a lower FID score than the other models.
+We again observe that the HWT model has a lower FID score than the other models.
 The code for the above test can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/compute-fid-hwt.ipynb}{here}.
 \subsection{Testing on IAM-Dataset}
 Add results
