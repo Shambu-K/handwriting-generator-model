@@ -285,8 +285,30 @@ While the size of the datasets used here was rather small, we can still observe 
 We again observe that the HWT model has a lower FID score than the other models.
 The code for the above test can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/compute-fid-hwt.ipynb}{here}.
 
-\section{Architecture Overview}
+\section{Proposed Model}
 
+\subsection{Architecture Overview}
+
+The model architecture described in the Handwriting Transformers paper is as follows. The sample image of the required handwriting is fed to the transformer encoder. The encoder consists of a ResNet-18-based CNN encoder network. The encoded feature set obtained is then passed to a transformer network of embedding size $d = 512$ with 3 attention layers having 8 attention heads thus concluding the handwriting distillation module. The final transformer-encoded feature vector is passed to the transformer decoder to begin handwriting generation.
+
+The query prompt is encoded to form a query embedding and passed to the transformer decoder along with the handwriting-style feature vector. The transformer decoder of similar attention structure as the transformer encoder outputs a decoded feature vector which is passed to a ResNet-18-based CNN decoder to generate a full-size image. This generated image is passed to a discriminator, a CRNN-based recognizer, and an ANN-based style classifier - all in place to fact-check the generator.
+
+\subsection{Loss Function}
+
+The loss function of this network, though complex, when broken down and related to each component of the network, is fairly intuitive. The model can be thought of as two distinct processes - extracting the required handwriting from a sample and applying the distilled handwriting to a new text prompt. The handwriting distillation module is constructed using a cycle loss. The code obtained from the encoder is used to reconstruct the image and clarify that all important details of the image can be reconstructed from this code determining that the code possesses all the required information about the handwriting.
+
+The loss function of the handwriting generation module has three main components. First, the generative adversarial loss is defined by the discriminator's ability to distinguish a generated image coming out of the decoder from a dataset-fed image thus ensuring that any newly generated image bears a likeness to the dataset. Therefore, the first loss component relates to the discriminator.
+
+The second loss component is defined by the recognizer. The recognizer is tasked with ensuring the legibility of the generated handwritten text in the sense that individual letters in the generated handwritten image are clearly distinguishable and recognizable. The text of the generated image, the ground truth used by the recognizer, is supplied as a query text prompt to the generator model. Treating this text prompt as a sequence of characters, the recognizer uses CTC loss, connectionist temporal classification loss (a sequentially modeled classification loss), to ensure that each character in the sequence is correctly manifested. In a sense, it consists of a classifier that attempts to classify each character in the generated image as one of the known characters of the English language ensuring that the language details are retained.
+
+The third loss component is a cross-entropy classification loss defined by the style classifier. The classifier attempts to classify the generated image into one of its known handwriting styles thus ensuring that unique handwriting details corresponding to the specific author of the original sample are retained within the image.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.45\textwidth]{../latex-src/Images/Architecture.png}
+  \caption{Handwriting Transformer model architecture}
+  \label{fig:arch}
+\end{figure}
 
 \section{Testing on IAM-Dataset}
 We test the Handwriting Transformers model on the IAM dataset. We feed the IAM dataset as input to the model with pretrained weights, and generate images in the handwriting styles of the writers in the IAM dataset, on which the model was originally trained. 
@@ -303,11 +325,32 @@ We test the Handwriting Transformers model on the IAM dataset. We feed the IAM d
   \includegraphics[width=0.45\textwidth]{../latex-src/Images/IAM-test2.png}
   \caption{Example-2}
   \label{fig:IAM-test2}
-\end{figure}
+\end{figure} \\
+We use a batch size of 8, i.e. we get 8 writer styles per page. The prompt used was \emph{Magic madness heaven sin Saw you there and I thought}. We can observe that the model is able to generate quite realistic images, capturing both global and local style patterns. The code for generating images, and more such examples, can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here}.
 
-We can observe that the model is able to generate quite realistic images, capturing both global and local style patterns. The code for generating images, and more such examples, can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here}.
+\\
 
 \section{Preliminary Results}
+The HWT model used to replicate the results in the previous section is trained on the IAM dataset \cite{IAM} and only accepts segmented word images from the target writer as the style input. We build on this model's testing to accept a text prompt and a sample of the handwriting to mimic from any writer, no longer constrained to belong to the IAM dataset. This demo code to perform custom testing can be viewed \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here.}
+
+Furthermore, we developed \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/para_to_words.ipynb}{\texttt{para\_to\_word.ipynb}}, which extracts the segmented word bounding boxes from a given paragraph image. This is done by using the OpenCV library, and using its functionality to find the contours in the image. We then cluster the nearby contours together to form the word bounding boxes. These word bounding boxes can then be fed into the HWT model to generate the desired output. Hence we are able to use a paragraph image as the input to the HWT model, instead of a single word images. Below we show a sample word extraction from a paragraph image. 
+% Bounding Boxes
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/Bounding_Box_Image.png}
+    \caption{Input Image}
+    \label{fig:bb_img}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/Bounding_Box_Words.png}
+    \caption{Words}
+    \label{fig:bb_words}
+  \end{subfigure}
+  \caption{{Using Word Bounding Boxes to split into segmented word images}}
+  \label{fig:bb}
+\end{figure}
 
 \begin{figure}[h]
   \centering
@@ -316,49 +359,60 @@ We can observe that the model is able to generate quite realistic images, captur
     \label{fig:taha-input}
   \end{subfigure}
   \hfill
+  \vspace*{-4mm}
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/Taha-output.png}
-    \caption{{writer: Taha}}
+    \caption{{Writer: Taha}}
     \label{fig:taha-output}
   \end{subfigure}
-  
+  \hfill
+  \vspace*{3mm}
+
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/anita-1.jpeg}
     \label{fig:anita-input}
   \end{subfigure}
   \hfill
+  \vspace*{-3mm}
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/Anita-output.png}
-    \caption{{writer: Anita}}
+    \caption{{Writer: Anita}}
     \label{fig:anita-output}
   \end{subfigure}
+  \hfill
+  \vspace*{3mm}
 
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/dhruv-1.jpeg}
     \label{fig:dhruv-input}
   \end{subfigure}
   \hfill
+  \vspace*{-3mm}
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/Dhruv-output.png}
-    \caption{{writer: Dhruv}}
+    \caption{{Writer: Dhruv}}
     \label{fig:dhruv-output}
   \end{subfigure}
+  \hfill
+  \vspace*{3mm}
 
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/shambu-1.jpeg}
     \label{fig:shambu-input}
   \end{subfigure}
   \hfill
+  \vspace*{-3mm}
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{../latex-src/Images/Shambu-output.png}
-    \caption{{writer: Shambu}}
+    \caption{{Writer: Shambu}}
     \label{fig:shambu-output}
   \end{subfigure}
   \caption{{We tested the model's performance using our own handwriting. Text prompt used: "Voyager impacts planets skips maples to focus on gold".}}
   \label{fig:Writers}
 \end{figure}
-Testing with our own handwriting \\
-Add changes made to make testing more accessibile 
+
+Using above functionality, we run the model on handwritings of the authors of this report, and successfully mimic their style on our text promt, as shown in \ref{fig:Writers} 
+
 %%%%%%%%% REFERENCES
 {\small
 \bibliographystyle{style/ieee_fullname}
