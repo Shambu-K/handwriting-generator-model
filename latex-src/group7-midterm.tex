@@ -189,7 +189,7 @@ GANwriting \cite{GAN-1} is limited to generating singular words, and as a result
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{latex-src/Images/Gan-Input1.png}
-    \caption{\textbf{Original Text}}
+    \caption{\textbf{Desired Handwriting}}
     \label{fig:subimage1}
   \end{subfigure}
   \hfill
@@ -205,7 +205,22 @@ GANwriting \cite{GAN-1} is limited to generating singular words, and as a result
 While Decoupled Style Descriptors \cite{BRUSH-paper} is able to capture local and global style patterns, it fails to generate legible letters or connect cursive letters. This is because of the underlying inconsistencies in human writing, which is only partially addressed in this model. Additionally, the model works with online handwriting data and we want to capture the styles of offline handwriting.\\
 Handwriting Transformers \cite{HWT} is able to generate realistic styled handwritten text images and significantly outperforms other state-of-the-art models. It handles variable length input and captures local and global style patterns. It is also compatible with offline handwriting data. Hence we have decided to use this model as our base model.\\
 
-*insert input and output image of HWT output*\\
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{latex-src/Images/Gan-Input1.png}
+    \caption{\textbf{Desired Handwriting}}
+    \label{fig:subimage1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{latex-src/Images/HWT-Output1.png}
+    \caption{\textbf{HWT}}
+    \label{fig:subimage2}
+  \end{subfigure}
+  \caption{\textbf{Mention Interpretation}}
+  \label{fig:figure}
+\end{figure}
 \subsection{FID Scores}
 Explanation of FID scores
 Add results
