@@ -191,7 +191,7 @@ Our final desired output is a series of points describing the trajectory of the 
 
 \section{Replicated Results}
 
-GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesn't encode style content entanglement at a character level and hence struggles to mimic character specific styles.\\
+GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesn't encode style content entanglement at a character level and hence struggles to mimic character specific styles. Fig.\ref{fig:GAN} shows the models performance on a desired handwriting style.\\
 
 \begin{figure}[h]
   \centering
@@ -212,7 +212,7 @@ GANwriting \cite{GAN-1} is limited to generating singular words, and as a result
 
 While Decoupled Style Descriptors \cite{BRUSH-paper} is able to capture local and global style patterns, it fails to generate legible letters or connect cursive letters. This is because of the underlying inconsistencies in human writing, which is only partially addressed in this model. Additionally, the model works with online handwriting data and we want to capture the styles of offline handwriting.
 
-Handwriting Transformers \cite{HWT} is able to generate realistic styled handwritten text images and significantly outperforms other state-of-the-art models. It handles variable length input and captures local and global style patterns. It is also compatible with offline handwriting data. Hence we have decided to use this model as our base model.\\
+Handwriting Transformers \cite{HWT} is able to generate realistic styled handwritten text images and significantly outperforms other state-of-the-art models. It handles variable length input and captures local and global style patterns. It is also compatible with offline handwriting data. Hence we have decided to use this model as our base model. Fig.\ref{fig:HWT} shows the models performance on a desired handwriting style.\\
 
 \begin{figure}[h]
   \centering
@@ -269,20 +269,59 @@ While the size of the datasets used here was rather small, we can still observe 
   \end{center}
 \end{table} \\
 Since we have used a significantly smaller dataset for computing the FID score for the HWT model, the results may not be entirely accurate. However, we can still observe that the HWT model has a lower FID score than the other models.
-The code for the above test can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/compute-fid-hwt.ipynb}{here}. 
-\subsection{Testing}
-
+The code for the above test can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/compute-fid-hwt.ipynb}{here}.
+\subsection{Testing on IAM-Dataset}
+Add results
 \section{Preliminary Results}
-\begin{figure*}
+
+\begin{figure}[h]
   \centering
-  \includegraphics[width=500pt,height=141pt]{../latex-src/Images/Our_HWT1.jpeg} 
-  \caption{Testing the model with our personal dataset. From the top the writers are - Anita, Dhruv, Taha, Shambu}
-\end{figure*}
-\begin{figure*}
-  \centering
-  \includegraphics[width=500pt,height=141pt]{../latex-src/Images/Our_HWT2.jpg} 
-  \caption{Testing the model with our personal dataset. From the top the writers are - Shambu, Anita, Taha, Dhruv}
-\end{figure*}
+   \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/taha-1.jpeg}
+    \label{fig:taha-input}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/Taha-output.png}
+    \caption{{writer: Taha}}
+    \label{fig:taha-output}
+  \end{subfigure}
+  
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/anita-1.jpeg}
+    \label{fig:anita-input}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/Anita-output.png}
+    \caption{{writer: Anita}}
+    \label{fig:anita-output}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/dhruv-1.jpeg}
+    \label{fig:dhruv-input}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/Dhruv-output.png}
+    \caption{{writer: Dhruv}}
+    \label{fig:dhruv-output}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/shambu-1.jpeg}
+    \label{fig:shambu-input}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/Shambu-output.png}
+    \caption{{writer: Shambu}}
+    \label{fig:shambu-output}
+  \end{subfigure}
+  \caption{{We tested the model's performance using our own handwriting. Text prompt used: "Voyager impacts planets skips maples to focus on gold".}}
+  \label{fig:Writers}
+\end{figure}
 Testing with our own handwriting \\
 Add changes made to make testing more accessibile 
 %%%%%%%%% REFERENCES
