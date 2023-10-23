@@ -178,7 +178,7 @@ For example, if we had images of X-Rays of a human body part and we had to deter
 
 Thus, this architecture allows us to hand-pick the kind of information we want to be depicted in the model's latent space representation of the data by making the model either improve or become worse at a parallel task involving correlated information. This architecture was originally proposed for use in the biomedical space but we believe that style transfer problems too could benefit from such an architecture due to the requirement of considering handwriting style information and character information distinctly. If we are able to isolate the style information from the character information completely giving the model a better empirical understanding of the handwriting style itself, this may improve our ability to generate better handwriting samples.
 
-\subsection{Stroke Paper}
+\subsection{Writing Order Recovery}
 Writing order recovery is a complex problem that relates to the intrinsic properties of human handwriting. However, integrating its solution with an observed handwritten text could tell us more about a subject's characteristic handwriting than ever before. This paper \cite{WOR} proposes an innovative deterministic algorithm to recover the writing order of any thinned long static handwritten signature. Signatures have been chosen out of the belief that they are the most complex version of this problem.
 
 The proposed method is completely intuitive and draws from the good continuity criteria of handwriting. The process of recovery has been split into 3 subprocesses - point classification, local examination, and global reconstruction.
@@ -190,7 +190,7 @@ The main complexity of such a problem has been described as the interpolation of
 
 \section{Replicated Results}
 
-GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesnt encode style content entanglement at a character level and hence struggles to mimic character specific styles.\\
+GANwriting \cite{GAN-1} is limited to generating singular words, and as a result we cannot have outputs of variable length. This is a major drawback as we want to generate entire lines of text. It doesn't encode style content entanglement at a character level and hence struggles to mimic character specific styles.\\
 
 \begin{figure}[h]
   \centering
@@ -230,8 +230,42 @@ Handwriting Transformers \cite{HWT} is able to generate realistic styled handwri
   \label{fig:HWT}
 \end{figure}
 \subsection{FID Scores}
-Explanation of FID scores
-Add results
+The Fréchet Inception Distance (FID) is a metric used to evaluate the quality of generated images. It is based on the Inception Score (IS) and the Frechet Distance (FD).It is a metric that measures the similarity between two distributions. The FID score is the Frechet Distance between the distribution of the real images and the distribution of the generated images. The lower the FID score, the better the quality of the generated images. A score close to zero implies that the two groups of images are nearly identical. \newline
+\newline
+\textbf{Table 1: Comparison of HWT with GANwriting model} with respect to their FID scores computed between the generated text images and the real text images from the IAM dataset. We generate datasets of 6 images each for both the models. The FID score for the HWT model is lower than that of the GANwriting model implying that the former generates better quality images than the latter.
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{|c|c|}
+      \hline
+      \textbf{Model} & \textbf{FID Score} \\
+      \hline
+      HWT & 70.67 \\
+      \hline
+      GANwriting & 94.77 \\
+      \hline
+    \end{tabular}
+  \end{center}
+% \caption{FID scores for HWT and GANwriting models}
+\end{table}\\
+While the size of the datasets used here was rather small, we can still observe that the HWT model generates better quality images than the GANwriting model. This is because the HWT model is able to capture the local and global style patterns of the text, while the GANwriting model is not. The purpose of this test was only to attest what was already proven in the papers. 
+\newline
+\textbf{Table 2: Comparison of HWT model with ScrabbleGAN and Davis et al} with respect to their FID scores. We generate a dataset of 95 images for the HWT model and then compute its FID score. For the other models, we take the FID scores as mentioned in the paper. Once again, we observe that the HWT model has a lower FID score than the other models. 
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{|c|c|}
+      \hline
+      \textbf{Model} & \textbf{FID Score} \\
+      \hline
+      HWT & 16.71 \\
+      \hline
+      ScrabbleGAN & 20.72 \\
+      \hline
+      Davis et al & 20.65 \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table} \\
+Since we have used a significantly smaller dataset for computing the FID score for the HWT model, the results may not be entirely accurate. However, we can still observe that the HWT model has a lower FID score than the other models.
 \subsection{Testing}
 Add results
 \section{Preliminary Results}
