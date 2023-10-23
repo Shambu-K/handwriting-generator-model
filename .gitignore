@@ -17,5 +17,5 @@ latex-output/*
 # Data files
 Handwriting-Transformers
 demo_output
-DataSet/IAM
-DataSet/demo.pickle
+DataSet/*
+!DataSet/*.jpeg
