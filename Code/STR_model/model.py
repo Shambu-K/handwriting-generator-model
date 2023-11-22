@@ -12,13 +12,13 @@ class ConvReluLayer(nn.Module):
     def forward(self, x):
         return self.layer(x)
 
-# Possible error
+# Possible error: First convolution needs to be coordconv
 class STR_Model(nn.Module):
-    def __init__(self, args):
+    def __init__(self):
         super(STR_Model, self).__init__()
     
         self.max_pool_2x2 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
-        self.max_pool_2x1 = nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1), padding=(0, 1), dilation=1, ceil_mode=False)
+        self.max_pool_2x1 = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 1), padding=(0, 1), dilation=1, ceil_mode=False)
         self.cnn_branch = nn.Sequential( # Input: batch x 1 x 60 x W
             ConvReluLayer(1, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),    # b x 64 x 60 x W
             self.max_pool_2x2,                                                          # b x 64 x 30 x W/2
@@ -26,11 +26,11 @@ class STR_Model(nn.Module):
             self.max_pool_2x2,                                                          # b x 128 x 15 x W/4
             ConvReluLayer(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), batch_norm=True), # b x 256 x 15 x W/4
             ConvReluLayer(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)), # b x 256 x 15 x W/4
-            self.max_pool_2x1,                                                          # b x 256 x 7 x W/4
+            self.max_pool_2x1,                                                          # b x 256 x 7 x W/4 + 1
             ConvReluLayer(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), batch_norm=True), # b x 512 x 7 x W/4
             ConvReluLayer(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)), # b x 512 x 7 x W/4
-            self.max_pool_2x1,                                                          # b x 512 x 3 x W/4
-            ConvReluLayer(512, 512, kernel_size=(2, 2), stride=(1, 1), batch_norm=True),# b x 512 x 2 x W/4
+            self.max_pool_2x1,                                                          # b x 512 x 3 x W/4 + 2
+            ConvReluLayer(512, 512, kernel_size=(2, 2), stride=(1, 1), batch_norm=True),# b x 512 x 2 x W/4 + 1
         )
         
         # Input: W/4 x batch x 1024

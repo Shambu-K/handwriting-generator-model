@@ -1,4 +1,4 @@
-from model import STRModel
+from model import STR_Model
 import torch
 from torch import nn
 import torchvision.datasets as datasets
@@ -44,6 +44,7 @@ def model_evaluation(model, data_loader, loss_function, device):
     avg_loss = loss/length
     return avg_loss,
 
+
 def model_fit(model, train_loader, test_loader, loss_function, optimizer, num_epochs, device, checkpoint):
     train_loss = []
     for epoch in range(num_epochs):
@@ -59,7 +60,7 @@ def model_fit(model, train_loader, test_loader, loss_function, optimizer, num_ep
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = STRModel().to(device)
+    model = STR_Model().to(device)
 
     # loss function = 
  
