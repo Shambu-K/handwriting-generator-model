@@ -1,7 +1,4 @@
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.autograd import Variable
 
 class ConvReluLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding=0, batch_norm=False):
@@ -15,7 +12,7 @@ class ConvReluLayer(nn.Module):
     def forward(self, x):
         return self.layer(x)
 
-# Possible 
+# Possible error
 class STR_Model(nn.Module):
     def __init__(self, args):
         super(STR_Model, self).__init__()
@@ -36,9 +33,9 @@ class STR_Model(nn.Module):
             ConvReluLayer(512, 512, kernel_size=(2, 2), stride=(1, 1), batch_norm=True),# b x 512 x 2 x W/4
         )
         
-        # Input: W/4 x b x 1024
+        # Input: W/4 x batch x 1024
         self.rnn_branch = nn.LSTM(input_size=1024, hidden_size=128, num_layers=2, bidirectional=True, dropout=0.5)
-        self.embedding = nn.Linear(in_features=2*128, out_features=4) # Output: b x (x, y, SoS, EoS)
+        self.embedding = nn.Linear(in_features=2*128, out_features=4) # Output: batch x (x, y, SoS, EoS)
         
     def postprocess_cnn(self, x):
         b, c, h, w = x.size() # b x 512 x 2 x W/4
@@ -54,7 +51,7 @@ class STR_Model(nn.Module):
         x = self.cnn_branch(x)
         x = self.postprocess_cnn(x)
         x, _ = self.rnn_branch(x) # Output: W/4 x b x 2*128
-        T, b, h = x.size() # W/4 x b x 2*128
-        x = x.view(T * b, 2*128)
-        x = self.embedding(x) # Output: W/4*b x 4
-        return x.view(T, b, 4) # Output: W/4 x b x 4
+        T, b, h = x.size()        # W/4 x b x 2*128
+        x = x.view(T * b, h)
+        x = self.embedding(x)     # Output: W/4*b x 4
+        return x.view(T, b, 4)    # Output: W/4 x b x 4
