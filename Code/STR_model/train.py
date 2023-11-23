@@ -20,7 +20,7 @@ def train(model, train_loader, loss_function, optimizer, device):
         optimizer.zero_grad()  
         output = model(data)  
         loss = loss_function(output, target) 
-        loss.backward()  
+        loss.backward()
         # Updating the model parameters
         optimizer.step() 
 
