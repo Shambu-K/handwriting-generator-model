@@ -5,7 +5,9 @@ from PIL import Image
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import ToTensor
-from gt_resampling import resample_strokes
+import sys
+# sys.path.append('')
+from .gt_resampling import resample_strokes
 from tqdm import tqdm
 
 class HandwritingDataset(Dataset):
@@ -78,4 +80,3 @@ def test_dataset():
     
 if __name__ == '__main__':
     test_dataset()
-# %%

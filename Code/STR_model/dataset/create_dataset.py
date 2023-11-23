@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 import numpy as np
 import matplotlib.pyplot as plt
-import cv2
 import copy
 from PIL import Image
 from PIL import Image, ImageDraw
@@ -277,5 +276,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-

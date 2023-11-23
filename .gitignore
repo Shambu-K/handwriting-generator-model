@@ -22,3 +22,4 @@ DataSet/*
 
 # Python intermediate files
 *.pyc
+__pycache__/
