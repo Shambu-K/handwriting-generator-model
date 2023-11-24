@@ -19,3 +19,7 @@ Handwriting-Transformers
 demo_output
 DataSet/*
 !DataSet/*.jpeg
+
+# Python intermediate files
+*.pyc
+__pycache__/
