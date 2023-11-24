@@ -84,96 +84,97 @@ Implement a deep learning model that can take a text prompt and a sample image o
 
 \subsection{Decoupled Style Descriptors\cite{BRUSH-paper}} 
 \label{subsec: Brush Paper}
-%  Capturing a space of handwriting stroke styles poses the challenge of representing both the style of each character and the overall style of the human writer.
-% This paper~\cite{BRUSH-paper} introduces an approach to online handwriting stroke representation via the Decoupled Style Descriptor (DSD) Model. 
+ Capturing a space of handwriting stroke styles poses the challenge of representing both the style of each character and the overall style of the human writer.
+This paper~\cite{BRUSH-paper} introduces an approach to online handwriting stroke representation via the Decoupled Style Descriptor (DSD) Model. 
 
-% As handwriting strokes can be modeled as  a sequence of points over time, supervised deep learning methods to handwriting representation can use recurrent neural networks (RNN).
+As handwriting strokes can be modeled as  a sequence of points over time, supervised deep learning methods to handwriting representation can use recurrent neural networks (RNN).
 
-% In this approach, there are three variations represented within an RNN model: the variation in writer style, the variation in character style, and the variation in writer-character style. Given a database of timestamped sequences of handwriting strokes with character labels, this model learns a representation that encodes three critical factors:- writer-independent character descriptors, writer-dependent character string style descriptors and writer-dependent global style descriptors.
+In this approach, there are three variations represented within an RNN model: the variation in writer style, the variation in character style, and the variation in writer-character style. Given a database of timestamped sequences of handwriting strokes with character labels, this model learns a representation that encodes three critical factors:- writer-independent character descriptors, writer-dependent character string style descriptors and writer-dependent global style descriptors.
 
-% We have as input $x = (p_1, p_2, ... p_N)$ which represents the stroke sequence and $s = (c_1, c_2, ..., c_M)$ represents the character sequence. An unsupervised learning technique is used to train a segmentation network $k_{\theta}(x,s)$ to map regions in $x$ to characters.
-%  We wish to predict $x'$ comprised of $p'_t$.  Further, Mixed Density Networks are used to provide variation in the output while generating the writing.
+We have as input $x = (p_1, p_2, ... p_N)$ which represents the stroke sequence and $s = (c_1, c_2, ..., c_M)$ represents the character sequence. An unsupervised learning technique is used to train a segmentation network $k_{\theta}(x,s)$ to map regions in $x$ to characters.
+ We wish to predict $x'$ comprised of $p'_t$.  Further, Mixed Density Networks are used to provide variation in the output while generating the writing.
 
-% For the given $x, s$ and a target string $c_t$ a parameterized encoder function $f^{enc}_{\theta}$ is trained to learn writer-dependent character-dependent latent vectors $w_{c_t}$. Simultaneously, a parameterized decoder function $f^{dec}_{\theta}$ is trained to predict the next point $p'_t$ given all the past points $p'_{1:t-1}$. Both the encoder and decoder functions used here are RNNs. To this method, so as to factor in character-independent writer style, we add another layer of abstraction, and introduce a parameterized encoder function $g_{\theta}$. 
-% % \begin{itemize}
-% %   \item When two stroke sequences $x_1$ and $x_2$ are written by the same writer, consistency in their writing style is represented by a character-independent writer-independent later vector $w$
-% %   \item When two character sequences $s_1$ and $s_2$ are written by the different writer, consistency in their writing style is represented by a character-dependent writer-independent latent matrix $C$, which is estimated using a parameterized encoder function $g_{\theta}$, also an RNN. 
-% %   \item $C_{c_t}$ instantiates a writer's style to draw a character via $w_{c_t}$, such that $C_{c_t}$ and $w$ are latent factors.
-% % \end{itemize} 
+For the given $x, s$ and a target string $c_t$ a parameterized encoder function $f^{enc}_{\theta}$ is trained to learn writer-dependent character-dependent latent vectors $w_{c_t}$. Simultaneously, a parameterized decoder function $f^{dec}_{\theta}$ is trained to predict the next point $p'_t$ given all the past points $p'_{1:t-1}$. Both the encoder and decoder functions used here are RNNs. To this method, so as to factor in character-independent writer style, we add another layer of abstraction, and introduce a parameterized encoder function $g_{\theta}$. 
+\begin{itemize}
+  \item When two stroke sequences $x_1$ and $x_2$ are written by the same writer, consistency in their writing style is represented by a character-independent writer-independent later vector $w$
+  \item When two character sequences $s_1$ and $s_2$ are written by the different writer, consistency in their writing style is represented by a character-dependent writer-independent latent matrix $C$, which is estimated using a parameterized encoder function $g_{\theta}$, also an RNN. 
+  \item $C_{c_t}$ instantiates a writer's style to draw a character via $w_{c_t}$, such that $C_{c_t}$ and $w$ are latent factors.
+\end{itemize} 
 
-% Given a target character $c_t$, we use encoder $g_{\theta}$ to generate a $C$ matrix. We then multiply $C_{c_t}$ by a desired writer style $w$ to generate $w_{c_t}$. Finally, we use a trained decoder $f^{dec}_{\theta}$ to create a new point $p'_t$ given previous points $p'_{1:t-1}$.
-% \begin{equation*}
-%   p'_t = f^{dec}_{\theta}(p'_{1:t-1}|w_{c_t}), \text{where } w_{c_t} = C_{c_t}w
-% \end{equation*}
-% In a qualitative user study, it was observed that the drawing samples generated by this model were preferred over few of the state of the art techniques. Further the model was also successful in interpolating samples at different levels, recovering representations for new characters and achieved high-writer identification accuracy. Despite that, the model occasionally failed in producing legible letters or in connecting cursive letters. One of the causes for this issue being the underlying inconsistencies in human writing, which was only partially addressed in this model. Additionally, the process of collecting high-quality data using digital pens in a crowdsourced environment, involving careful data cleaning, persists to be another challenge. 
+Given a target character $c_t$, we use encoder $g_{\theta}$ to generate a $C$ matrix. We then multiply $C_{c_t}$ by a desired writer style $w$ to generate $w_{c_t}$. Finally, we use a trained decoder $f^{dec}_{\theta}$ to create a new point $p'_t$ given previous points $p'_{1:t-1}$.
+\begin{equation*}
+  p'_t = f^{dec}_{\theta}(p'_{1:t-1}|w_{c_t}), \text{where } w_{c_t} = C_{c_t}w
+\end{equation*}
+In a qualitative user study, it was observed that the drawing samples generated by this model were preferred over few of the state of the art techniques. Further the model was also successful in interpolating samples at different levels, recovering representations for new characters and achieved high-writer identification accuracy. Despite that, the model occasionally failed in producing legible letters or in connecting cursive letters. One of the causes for this issue being the underlying inconsistencies in human writing, which was only partially addressed in this model. Additionally, the process of collecting high-quality data using digital pens in a crowdsourced environment, involving careful data cleaning, persists to be another challenge. 
 
 
 \subsection{GANwriting\cite{GAN-1, GAN-2}}
 \label{subsec: GANWriting}
-% Generative Adversarial Networks (GANs) have been succesfully used for generating illusory plausible images in various fields. GANs consist of two neural networks, a generator, and a discriminator, which are trained simultaneously through a competitive process in which both improve iteratively. 
+Generative Adversarial Networks (GANs) have been succesfully used for generating illusory plausible images in various fields. GANs consist of two neural networks, a generator, and a discriminator, which are trained simultaneously through a competitive process in which both improve iteratively. 
 
-% In the paper~\cite{GAN-1}, the authors use a conditional non-recurrent generative adversial (cGAN), to produce realistic handwritten word images. In order to produce these diverse stylized words, the textual content along with the specific wrting style, defined by a latent set of calligraphic attributes, are separately conditioned on the generative model. To train the model and achieve the desired results, the authors used the following three novel techniques:
-% \begin{itemize}
-%     \item Three complementary learning objectives, namely adversial loss, style classification loss, and reconstruction loss, are used to train the model. State-of-the-art discriminator, classifier, and word recognizer networks are used to train the model.
-%     \item Character-based content conditioning is done, allowing to generate any word, without being restricted to a specific vocabulary.
-%     \item Few-shot calligraphic style conditioning is done to avoide the mode collapse problem.
-% \end{itemize}
+In the paper~\cite{GAN-1}, the authors use a conditional non-recurrent generative adversial (cGAN), to produce realistic handwritten word images. In order to produce these diverse stylized words, the textual content along with the specific wrting style, defined by a latent set of calligraphic attributes, are separately conditioned on the generative model. To train the model and achieve the desired results, the authors used the following three novel techniques:
+\begin{itemize}
+    \item Three complementary learning objectives, namely adversial loss, style classification loss, and reconstruction loss, are used to train the model. State-of-the-art discriminator, classifier, and word recognizer networks are used to train the model.
+    \item Character-based content conditioning is done, allowing to generate any word, without being restricted to a specific vocabulary.
+    \item Few-shot calligraphic style conditioning is done to avoide the mode collapse problem.
+\end{itemize}
 
 
-% However this model is limited to singular words. In the paper~\cite{GAN-2}, they expand on these ideas to allow variable length  textual input, allowing it to generates entire lines of offline handwriting.
+However this model is limited to singular words. In the paper~\cite{GAN-2}, they expand on these ideas to allow variable length  textual input, allowing it to generates entire lines of offline handwriting.
 
 \subsection{Handwriting Transformers\cite{HWT}}
 \label{subsec: HWT}
-% Earlier Handwriting generative methods process style and features separately. It doesn't encode style content entanglement at a character level. In this paper ~\cite{HWT}. the authors propose a transformer-based styled handwritten text image generation approach, HWT, that strives to learn both style-content entanglement as well as global (such as ink width, slant) and local (such as character style, ligatures) writing style patterns. The overall architecture has four components: 
-% \begin{itemize}
-%   \item Conditional Generator : Synthesize handwritten text.
-%   \item Discriminator: Ensures realistic generation of handwriting styles. It is designed to be convolutional in nature
-%   \item Recognizer: Aids in textual content preservation. It is inspired by CRNN
-%   \item Style Classifier: Ensures satisfactory transfer of calligraphic styles.
-% \end{itemize}
+Earlier Handwriting generative methods process style and features separately. It doesn't encode style content entanglement at a character level. In this paper ~\cite{HWT}. the authors propose a transformer-based styled handwritten text image generation approach, HWT, that strives to learn both style-content entanglement as well as global (such as ink width, slant) and local (such as character style, ligatures) writing style patterns. The overall architecture has four components: 
+\begin{itemize}
+  \item Conditional Generator : Synthesize handwritten text.
+  \item Discriminator: Ensures realistic generation of handwriting styles. It is designed to be convolutional in nature
+  \item Recognizer: Aids in textual content preservation. It is inspired by CRNN
+  \item Style Classifier: Ensures satisfactory transfer of calligraphic styles.
+\end{itemize}
 
-% In the paper, the focus of the design is in the generator model. To imitate a handwriting style as realistically as possible, This model is designed to learn style content entanglement as well as local and global style patterns.  It is a transformer-based generative network for unconstrained styled handwritten text image generation.  It has two main components an encoder network and a decoder network.  Both the encoder and decoder networks constitute a hybrid design based on convolution and multi-head self-attention networks.
+In the paper, the focus of the design is in the generator model. To imitate a handwriting style as realistically as possible, This model is designed to learn style content entanglement as well as local and global style patterns.  It is a transformer-based generative network for unconstrained styled handwritten text image generation.  It has two main components an encoder network and a decoder network.  Both the encoder and decoder networks constitute a hybrid design based on convolution and multi-head self-attention networks.
 
-% HWT generates realistic styled handwritten text images and significantly outperforms other state-of-the-art models through extensive qualitative, quantitative and human based evaluations. The model also generalizes well to the challenging scenarios where both words and writing style are unseen during training, generating realistic styled handwritten text images 
+HWT generates realistic styled handwritten text images and significantly outperforms other state-of-the-art models through extensive qualitative, quantitative and human based evaluations. The model also generalizes well to the challenging scenarios where both words and writing style are unseen during training, generating realistic styled handwritten text images 
 
 \subsection{Dynamic CRNN (Recognizer)\cite{crnn}}
 \label{subsec: CRNN}
 
-% The DC-CRNN (Dynamically Configurable Convolutional Recurrent Neural Network) \cite{crnn} is one of the best performing handwriting recognition models out now. The CRNN has been used as a recognizer in other models as well. Recognition is a vital prerequisite to generation so we can learn how to better generate handwritten text from better recognition models.
+The DC-CRNN (Dynamically Configurable Convolutional Recurrent Neural Network) \cite{crnn} is one of the best performing handwriting recognition models out now. The CRNN has been used as a recognizer in other models as well. Recognition is a vital prerequisite to generation so we can learn how to better generate handwritten text from better recognition models.
 
-% The CRNN structure counters the most significant challenge with handwriting analysis which is variable-length sequences. A CNN module is used to extract spatial features while the label, text data corresponding to the image, is treated as a character sequence fed to the RNN. With this setup, the model is able to accurately learn correlation between different characters while considering the global effect of the handwriting style via its CNN module. The optimization problem is framed differently using SSA and LAHC to have a more generalized solution that considers more of the data than exploit it using swarm optimization given the complexity of the latent space. Though the algorithm itself requires more investigation to understand its specific value, the result is shown to significantly improve when LAHC (Late Acceptance Hill Climbing) is used - comparing current solution with that from multiple steps ago to ensure stability.
+The CRNN structure counters the most significant challenge with handwriting analysis which is variable-length sequences. A CNN module is used to extract spatial features while the label, text data corresponding to the image, is treated as a character sequence fed to the RNN. With this setup, the model is able to accurately learn correlation between different characters while considering the global effect of the handwriting style via its CNN module. The optimization problem is framed differently using SSA and LAHC to have a more generalized solution that considers more of the data than exploit it using swarm optimization given the complexity of the latent space. Though the algorithm itself requires more investigation to understand its specific value, the result is shown to significantly improve when LAHC (Late Acceptance Hill Climbing) is used - comparing current solution with that from multiple steps ago to ensure stability.
 
-% Other models are limited by the sequence and this architecture appears to solve that long-standing issue. We want to explore possible integration of these techniques in generation models for improved performance.
+Other models are limited by the sequence and this architecture appears to solve that long-standing issue. We want to explore possible integration of these techniques in generation models for improved performance.
 
 \subsection{Handwriting Trajectory Recovery\cite{image2stroke-1Char}}
 \label{subsec: img2stroke}
-% Temporal information is unavailable when it comes to offline text. An image scanner or a video camera is not capable of extracting information like velocity, pressure, inclination etc. If one is able to recover the stroke trajectory from the static 2D image, then offline text can be viewed as an online text. This paper \cite{image2stroke-1Char} proposes a technique that can predict the probable trajectory of an offline character level image.
+Temporal information is unavailable when it comes to offline text. An image scanner or a video camera is not capable of extracting information like velocity, pressure, inclination etc. If one is able to recover the stroke trajectory from the static 2D image, then offline text can be viewed as an online text. This paper \cite{image2stroke-1Char} proposes a technique that can predict the probable trajectory of an offline character level image.
 
-% The model is inspired from the sequence to sequence model based on encoder-decoder architecture. The model sequentially predicts the data coordinate points of the pen trajectory from the offline character images.The framework of this model consists of mainly two steps.
-% \begin{itemize}
-%     \item Extract a sequence feature vector from the offline images using CNN.
-%     \item  An encoder-decoder LSTM network takes the sequence feature as the input and outputs the required coordinate points.
-% \end{itemize}
+The model is inspired from the sequence to sequence model based on encoder-decoder architecture. The model sequentially predicts the data coordinate points of the pen trajectory from the offline character images.The framework of this model consists of mainly two steps.
+\begin{itemize}
+    \item Extract a sequence feature vector from the offline images using CNN.
+    \item  An encoder-decoder LSTM network takes the sequence feature as the input and outputs the required coordinate points.
+\end{itemize}
 
-% The model is able to find out the correct starting point and extract the correct incoming and outgoing paths from junction points effectively. 
+The model is able to find out the correct starting point and extract the correct incoming and outgoing paths from junction points effectively. 
 
 
 \subsection{Domain-Adversarial Neural Network\cite{DANN}}
 \label{subsec: DANN}
 
-% DANN (Domain-Adversarial Neural Network) \cite{DANN} is an interesting architecture that we believe, could be utilized in the problem of specific-style handwriting generation. DANN is an improvement to any regular network structure due to its parallel branch.
+DANN (Domain-Adversarial Neural Network) \cite{DANN} is an interesting architecture that we believe, could be utilized in the problem of specific-style handwriting generation. DANN is an improvement to any regular network structure due to its parallel branch.
 
-% Given a Neural Network performing a downstream task on a given dataset, the output of the penultimate layer is considered the final representation of the input data. On this representation, we apply our last layer which is the downstream task itself but the more interesting part is the learnt representation. We claim that with enough training, this penultimate layer output is the best possible latent space representation of the data distribution possessing the information required to perform a downstream task. The nature of Deep Learning makes it so that we can never truly know the kind of correlations the model has learnt from the input data and how the information is being represented but we know that the information required for the downstream task is somehow contained in the representation. If the existence of a downstream task and its loss function controls the information present in the representation, then if we want to include or exclude further information from the representation, all we need to do is have a parallel branch of the neural network performing that downstream task on the representation. When we consider the loss of this new branch downstream task while updating our representation-learning, the learnt representation now possesses or is independent of information regarding this task.
+Given a Neural Network performing a downstream task on a given dataset, the output of the penultimate layer is considered the final representation of the input data. On this representation, we apply our last layer which is the downstream task itself but the more interesting part is the learnt representation. We claim that with enough training, this penultimate layer output is the best possible latent space representation of the data distribution possessing the information required to perform a downstream task. The nature of Deep Learning makes it so that we can never truly know the kind of correlations the model has learnt from the input data and how the information is being represented but we know that the information required for the downstream task is somehow contained in the representation. If the existence of a downstream task and its loss function controls the information present in the representation, then if we want to include or exclude further information from the representation, all we need to do is have a parallel branch of the neural network performing that downstream task on the representation. When we consider the loss of this new branch downstream task while updating our representation-learning, the learnt representation now possesses or is independent of information regarding this task.
 
-% For example, if we had images of X-Rays of a human body part and we had to determine if the subject is fractured or not, our primary downstream task would be to classify the image as fractured or not. But if we have labels as to what part of the human body is present in the image, then we can ensure that our representation learns features of the image that are independent of whether the subject is a hand or a leg. This can be implemented by having a parallel downstream task on the representation that classifies the image as being an X-Ray of a hand or an X-Ray of a leg. Next, we subtract the loss of this classifier for the representation-learning layers. Thus, the model is forced to get worse at identifying whether the subject in the image is a hand or a leg making its learnt representation independent (but aware) of this information and only focussed on whether the subject is fractured or not.
+For example, if we had images of X-Rays of a human body part and we had to determine if the subject is fractured or not, our primary downstream task would be to classify the image as fractured or not. But if we have labels as to what part of the human body is present in the image, then we can ensure that our representation learns features of the image that are independent of whether the subject is a hand or a leg. This can be implemented by having a parallel downstream task on the representation that classifies the image as being an X-Ray of a hand or an X-Ray of a leg. Next, we subtract the loss of this classifier for the representation-learning layers. Thus, the model is forced to get worse at identifying whether the subject in the image is a hand or a leg making its learnt representation independent (but aware) of this information and only focussed on whether the subject is fractured or not.
 
-% Thus, this architecture allows us to hand-pick the kind of information we want to be depicted in the model's latent space representation of the data by making the model either improve or become worse at a parallel task involving correlated information. This architecture was originally proposed for use in the biomedical space but we believe that style transfer problems too could benefit from such an architecture due to the requirement of considering handwriting style information and character information distinctly. If we are able to isolate the style information from the character information completely giving the model a better empirical understanding of the handwriting style itself, this may improve our ability to generate better handwriting samples.
+Thus, this architecture allows us to hand-pick the kind of information we want to be depicted in the model's latent space representation of the data by making the model either improve or become worse at a parallel task involving correlated information. This architecture was originally proposed for use in the biomedical space but we believe that style transfer problems too could benefit from such an architecture due to the requirement of considering handwriting style information and character information distinctly. If we are able to isolate the style information from the character information completely giving the model a better empirical understanding of the handwriting style itself, this may improve our ability to generate better handwriting samples.
 
 ,\vspace*{-1em}
 
 \subsection*{Midterm Report Literature Review}
 % \subsection{Stroke Separation \& Writing Order Recovery}
 \subsection{Writing Order Recovery\cite{WOR}}
+\label{sec:wor_det}
 Writing order recovery is a complex problem that relates to the intrinsic properties of human handwriting. This paper \cite{WOR} proposes an innovative deterministic algorithm to recover the writing order of any thinned long static handwritten signature. Signatures have been chosen out of the belief that they are the most complex version of this problem.
 
 The proposed method is completely intuitive and draws from the good continuity criteria of handwriting. The process of recovery has been split into 3 subprocesses - point classification, local examination, and global reconstruction.
@@ -285,6 +286,8 @@ The code for the above test can be found \href{https://github.com/Shambu-K/handw
 
 \section{Proposed Model}
 
+We approach the problem of custom handwriting generation and animation as a 2-step process: (i) generating a handwritten image from a given text prompt and handwriting sample, (ii) recovering the stroke of the handwritten image. We first discuss the generation aspect.
+
 \subsection{Architecture Overview}
 
 The model architecture described in the Handwriting Transformers paper is as follows. The sample image of the required handwriting is fed to the transformer encoder. The encoder consists of a ResNet-18-based CNN encoder network. The encoded feature set obtained is then passed to a transformer network of embedding size $d = 512$ with 3 attention layers having 8 attention heads thus concluding the handwriting distillation module. The final transformer-encoded feature vector is passed to the transformer decoder to begin handwriting generation.
@@ -326,7 +329,7 @@ We test the Handwriting Transformers model on the IAM dataset \cite{IAM}. We fee
 \end{figure} \\
 We use a batch size of 8, i.e. we get 8 writer styles per page. The prompt used was \emph{Magic madness heaven sin Saw you there and I thought}. We can observe that the model is able to generate quite realistic images, capturing both global and local style patterns. The code for generating images, and more such examples, can be found \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here}.
 \\
-\section{Preliminary Results}
+\section{Preliminary Results}\label{prelim-results}
 The HWT model used to replicate the results in the previous section is trained on the IAM dataset \cite{IAM} and only accepts segmented word images from the target writer as the style input. We build on this model's testing to accept a text prompt and a sample of the handwriting to mimic from any writer, no longer constrained to belong to the IAM dataset. This demo code to perform custom testing can be viewed \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/demo-hwt.ipynb}{here.}
 
 Furthermore, we developed \href{https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/para_to_words.ipynb}{\texttt{para\_to\_word.ipynb}}, which extracts the segmented word bounding boxes from a given paragraph image. This is done by using the OpenCV library, and using its functionality to find the contours in the image. We then cluster the nearby contours together to form the word bounding boxes. These word bounding boxes can then be fed into the HWT model to generate the desired output. Hence we are able to use a paragraph image as the input to the HWT model, instead of a single word images. Below we show a sample word extraction from a paragraph image. 
@@ -409,53 +412,211 @@ Furthermore, we developed \href{https://github.com/Shambu-K/handwriting-generato
 
 Using above functionality, we run the model on handwritings of the authors of this report, and successfully mimic their style on our text promt, as shown in \ref{fig:Writers} 
 
-\section{Offline Handwriting Stroke Recovery}  
+\section{Offline Handwriting Stroke Recovery} \label{deterministic-wor}
 
-Ples enter some summarry for the deterministic hwt recovery
+Stroke recovery has been previously viewed as a problem solvable with a defined deterministic algorithm. Though this bears merit given that pixel neighbourhoods alone are often sufficient to group points into strokes, they provide no insight into the order of such points and consequently, the direction and speed of the stroke itself.
 
-\subsection{Why do we need DL Model}  - Dhruv
+One such approach discussed earlier (refer Sec. \ref{sec:wor_det}) was tested in the earlier stages of analysis. This algorithm was previously deployed for stroke recovery on signatures and upon replication of their results, we noticed a few discrepancies. The algorithm had regular failures in separating intersecting strokes, a common occurence in modern handwritten language, especially cursive loops. Furthermore, stroke directions were often flipped (traced in the opposite direction) since the model was unable to appropriately distinguish the start and end points of the stroke from each other - being hard-coded with convention of leftmost edge point recognized as start point. Another observation was that strokes belonging to the same letter in a word were not being drawn one after the other since intersection with neighbouring letters was causing the algorithm to approach the stroke as if it belonged to a different letter.
 
-Ples enter why deterministic models are eh - 
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/madness.jpg}
+    \caption{We can see that the algorithm struggles with loops}
+    \label{fig:bb_img}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{../latex-src/Images/deterministic-fail.jpeg}
+    \caption{The algorithm also fails to correctly model the order of strokes}
+    \label{fig:bb_words}
+  \end{subfigure}
+  \caption{{Replicating the outputs of the deterministic algorithm in \ref{sec:wor_det} on our inputs}}
+  \label{fig:bb}
+\end{figure}
 
-\subsection{DL models}
-Bhunia et al. \cite{image2stroke-1Char} developed a deep learning model for offline handwiting stroke recovery. They used an encoder-decoder network, combining a CNN and a LSTM. LSTM is useful because it can remember information over a long sequence, which is crucial for recognizing strokes in characters. However this model focuses on single stroke characters with square images, and has limitations for more complex tasks, like handling wider, multistroke images. \textbf{Hung Tuan Nguyen et al.} built on their work by extending the model to recover multiple strokes in a single image and added an attention mechanism for better performance but they only demonstrated it for single japanese kanji characters.  
+\subsection{Need for Deep Learning}
+
+Deep Learning has previously demonstrated the ability to infer intrinsic qualities of handwriting. Modern sequence models are shown to accurately represent and replicate human tendencies and hence warrants exploration of such solutions in regards to this problem.
+
+\subsection{DL-based Solutions}
+Bhunia et al. \cite{image2stroke-1Char}[2018] developed a deep learning model for offline handwiting stroke recovery. They used an encoder-decoder network, combining a CNN and a LSTM. LSTM is useful because it can remember information over a long sequence, which is crucial for recognizing strokes in characters. However this model focuses on single stroke characters with square images, and has limitations for more complex tasks, like handling wider, multistroke images. Hung Tuan Nguyen et al. \cite{img2strk-japanese}[2020] built on their work by extending the model to recover multiple strokes in a single image and added an attention mechanism for better performance but they only demonstrated it for single japanese kanji characters.  
 
 The models mentioned above are trained on single stroke characters, and are not suitable for our task of recovering complex offline handwriting. We need a model that can handle multistroke characters, and can be trained on a dataset of offline handwriting.
 
-\section{Proposed Model} - Taha
+\section{Proposed Model for Stroke Recovery}
 
-Introduction 
+To model the longer multi-stroke handwriting trajectories for the english language, we build on the work of Bhunia et al. \cite{image2stroke-1Char}, as done by Archibald et al. \cite{image2stroke-Archibald}[2021], who extend the architecture of \cite{image2stroke-1Char} to allow for variable width input trajectories. We also take inspiration from \cite{img2stroke-multichar} and work with a word level dataset we create. Below we describe our model's architecture, dataset, and training procedure in detail.
 
-\subsection{Model Architecture} - Taha
+\subsection{Model Architecture}
+To allow for arbitrarily wide images, we first employ a CNN to encode the input image into a feature vector. This feature vector is then passed to a bidirectional LSTM, which outputs a sequence of points. This sequence of points is then passed to a fully connected layer, which outputs the final sequence of points.
+% Add image of model architecture
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{../latex-src/Images/str-model-architecture.jpeg}
+  \caption{Our model architecture as described in \cite{image2stroke-Archibald}. }
+  \label{fig:stroke-arch}
+\end{figure}
 
-\subsection{Dataset} - Dhruv Anita \\
-* about IAM online dataset - Dhruv \\
+The CNN channel expects a image of shape $(1, 60, W)$, where 60 is our fixed height and W is the variable width of the input image. The CNN consists of seven convolutional blocks, with $3 \times 3$ kernels for convolution, and both $2 \times 2$ windows for MaxPool operations. The CNN finally outputs a feature vector of shape $(W/4, 1024)$. In this feature vector, we consider the $W/4$ dimension as our `time' dimension. We then pass this feature `sequence' into a 2-layer, bidirectional LSTM, followed by a 1D convolution. 
+
+The result is a sequence of stroke point predictions. For each step, the cRNN predicts $(x,y)$, the co-ordinates of the next point in the stroke, as well as whether the point is the start of a new stroke (SoS token), and whether the point is the end of a sequence (EoS token).
+
+The above architecture predicts a sequence of (W/4) points for an input image of width W. However, we observed that this might be an insufficient number of predictions to faithfully model the ground truth stroke points. Hence we also implemented 2 different varients for the convolutional encoder, which output a feature vector of shape $(W, 512)$ and $(W, 1024)$ respectively. We intend to train these models too and compare their performance with the original model, provided we have enough time to train the models.
+
+\subsection{Dataset}
+
+The most widely recognized online handwriting benchmark dataset is IAM-onDB, a large online handwritten sentences database. It consists of text acquired via an electronic interface from a whiteboard. This data is stored in both offline form (.tif static images of handwritten text) and online form (.xml files containing spatial coordinates and their corresponding time instances per stroke). The database contains about 86,000 word instances from an 11,000 dictionary written by more than 200 writers. The database is not directly publicly available but we obtained a processed form from the repository of our base paper.
 
 IAM-online dataset consist of handwriting images and strokes at line level. We use this dataset to create our own dataset of offline handwriting images and strokes at word level by splitting the lines into words. the line-level stroke dataset consists of boundary coordinates of the entire line and coordinates of all the strokes in the line. We use the boundary coordinates to verify if the handwriting image corresponds to the stroke data and do the necessary scaling, translation to map them. However after mapping, We noticed that the handwriting image does not match to that of the one generated by the stroke. We tried the following methods to match the size of the image and stroke data:
 \begin{itemize}
-  \item We observed that all the handwriting images had a padding of 100 pixels. We removed this padding from the image. However, this method did not work for all the images.
-  \item We tried resizing the image to match the boundary coordinates of the stroke data, however this just zoomed in the image and did not match the size of the stroke data. Padding did not work either.
-  \item Finally we decided to generate the image directly from the stroke data. We used the stroke data to generate the image using the \texttt{draw} function in the \texttt{PIL} library. This method worked for all the images.
+ \item with the help of the boundary coordinates we tried to translate and scale the stroke points to match the image size. However this method did not work as it just increased the size of the handwriting, as shown in fig-\ref{fig:first_image}
+  \item We observed that all the handwriting images had a padding of 100 pixels. We removed this padding from the image. However, this method did not work for all the images. as shown in fig-\ref{fig:second_image}
+  \item Finally we decided to generate the image directly from the stroke data. We used the stroke data to generate the image using the \texttt{draw} function in the \texttt{PIL} library. Shown in fig-\ref{fig:stkgenl} This method worked for all the images.
 \end{itemize}
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[t]{0.23\textwidth}  % Change [b] to [t]
+    \includegraphics[width=\textwidth]{latex-src/Images/ImagevsStroke.png}
+    \caption{The text shown in the first plot is much smaller than the image generated by the stroke}
+    \label{fig:first_image}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.23\textwidth}  % Change [b] to [t]
+    \includegraphics[width=\textwidth]{latex-src/Images/Padding_ImagevsStroke.png}
+    \caption{After removing the padding from the handwriting image, We can see that the two plots look similar, however we can also see that first image has a larger width than the second, this may cause a problem when we are splitting the image into words}
+    \label{fig:second_image}
+  \end{subfigure}
+  \caption{Comparing the handwriting image and the image generated by the strokes}
+  \label{fig:whole_figure}
+\end{figure}
 
-% display 1 image
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{latex-src/Images/Stroke_Generated.png}
+    \caption{Image generated by the strokes}
+    \label{fig:stkgenl}
+\end{figure}
 
+As per the English language syntax, we are aware that words are spaced apart by significant distances. Strokes of distinct words are completely unrelated and laterally spatially separable (as seen in several deterministic solutions). For any x-coordinate-traversing sequence model, words will be easily distinguishable and purely occupy valuable memory space. Hence, we separate our line-level data into words and train the model to animate at the word-level. To complete the pipeline, the splitting of words and reattaching word strokes to form an animated line is done via the aforementioned deterministic algorithm and concatenation respectively.
 
-
-
-* Splitting line to words - Dhruv
+Finally our data set consists of strokes, with a start of stroke and an end of stroke flag and images generated by the strokes resized to a height of 60 pixels. 
 
 Furthermore, since our model's output sequence length is proportional to the input image width, we re-sample our ground truth stroke points to have the same number of points as the input image width. We also have our re-sampled points be equidistant to each other on the curve, so that the model can learn the stroke trajectory better. We do this by keeping track of the cumulative sum of the distances between consecutive points, and then re-sampling the points at equidistant intervals. Note that because of this re-sampling, our model does not truly learn temporal stroke reconstruction with the right velocity at different stroke points, but rather it learns the spatial trajectory of the stroke in a better manner.
 
-\subsection{DTW Loss} - Shambu
-Explain loss 
+\subsection{DTW Loss}
+% explain DTW loss
+
+
+The objective of our loss function is to prioritize combination of stroke points that could possibly generate the original image. This involves ensuring that all the predicted stroke points align with the location of the original strokes, collectively covering the entire extent of the strokes. Further, we want our model to accurately predict both the sequential order in which the sequences initially drawn and the direction of each stroke. 
+
+% talk about the potential issues with the approach
+
+Therefore, we aim to find a mapping from the predicted points to the ground truth points. It is possible that multiple points of sequences point to the same function. Hence, instead of restricting to a one-to-one mapping, where each predicted point corresponds to one ground truth point, we consider many-to-many mappings, so as to minimize the distance between every predicted point and a ground truth point, and vice versa. We also aim to ensure that the predicted points are in the same order as the ground truth points.
+
+This can be formulated in the form of the following constraints:-
+\begin{align}
+\min_{p \in P} || t_i - p ||   \qquad   \forall t \in T
+\end{align}
+This ensures that our prediction $P$ spans the entire ground truth function.
+\begin{align}
+  \min_{t \in T} || p_i - t ||  \qquad  \forall p \in P
+\end{align}
+This ensures that each predicted point lies on the original stroke.
+
+Lastly, in order to preserve the order of points, our mapping should maintain monotonicity and continuity.
+Consider {i} as an index of the sequence of points in a stroke and {s} as an index for some mapping then,
+\begin{align}
+  i_{s-1} < i_s 
+\end{align}
+This ensures that the mapping is monotonic.
+\begin{align}
+ i_s - i_{s-1} = 1
+\end{align}
+This ensures that the mapping is continuous.
+\newline 
+In order to fulfill our objective, we make use of the DTW algorithm, which satisfies all our constraints.
+
+The DTW algorithm is a dynamic programming algorithm that measures the similarity between two temporal sequences which may vary in speed. In the context of handwriting, we use DTW to compare the similarity between the predicted stroke and the ground truth stroke.
+To do so, we first calculate the cost matrix, which is a matrix of size $n \times m$, where $n$ is the number of points in the predicted stroke and $m$ is the number of points in the ground truth stroke. Each element of the cost matrix is the distance between the corresponding points in the predicted stroke and the ground truth stroke. 
+This is given by:-
+\begin{align}
+    \text{cost}(i, j) = ||p_i - t_j||^2
+\end{align}
+
+The cost matrix is then used to calculate the accumulated cost matrix, which is again a matrix of size $n \times m$, where each element is the minimum cost of reaching that cell. 
+\begin{align}
+    A(i, j) = \text{cost}(i, j) + \min[A(i-1, j),  \\ A(i, j-1), A(i-1, j-1)]
+\end{align}
+
+The accumulated cost matrix is then used to calculate the warping path, which is the path that minimizes the total cost. This path is calculated by backtracking from the bottom right corner of the accumulated cost matrix to the top left corner. This path gives the set of points that are mapped from the predicted stroke to the ground truth stroke. The DTW loss is then calclulated by the sum of the distances between the points in the warping path.
+
+For our purpose, we consider the L1 loss as the L2 loss tends to penalize outliers more severely, leading to more discontinuities in the predicted stroke. Therefore, our DTW loss is given by the following equation:-
+\begin{align}
+    \mathcal{L}_{\text{DTW}}(P, T) = \sum_{i=1}^{n} ||p_i - t_{\alpha(i)}||
+\end{align}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{latex-src/Images/DTW_map.png}
+    \caption{Optimal alignment between predicted and target sequence (Pred sequence is the target resampled to have more points)}
+    \label{fig:dtw}
+\end{figure}
+
+Here, $\alpha$ is an onto function that maps each point in the predicted stroke to a point in the ground truth stroke.
+\newline \newline
+After computing the optimal alignment using DTW loss, we employ a cross-entropy loss for predicting the start of stroke and end of stroke tokens.
+
+For SOS tokens, we consider the first predicted point that matches to a ground truth SOS point to be the corresponding SOS. We then apply a cross-entropy loss with class weights to penalize the model for predicting the SOS token at any other point in the sequence, hence dealing with the class imbalance issue.
+
+Similarly, cross-entropy loss is applied to for predicting EOS tokens. 
+In this case, to deal with the class imbalance issue, we replicate the EOS ground truth stroke point twenty times and append it to the end of the ground truth sequence. Consequently, the model is trained to predict the EOS token for all subsequent points following the initial EOS stroke point.
+
+To implement DTW loss for our model, we initially implemented our own DTW algorithm from scratch. This had a time complexity of $O(n^2)$, where $n$ is the number of points in the predicted stroke. This was too slow and computationally expensive for our model. We then tried to vectorize it first using numpy arrays, then attempted with tensor operations. However, this too turned out to be slow for our purpose. Therefore, we looked at other implementations of DTW loss, including soft-dtw. However, these implementations were not compatible with our model.
+
+Finally, we found the \texttt{fastdtw} library, which is a python implementation of the DTW algorithm. This implementation was compatible with our model and has a time complexity of $O(n)$. A stroke sequence of length 100 which took 10 seconds to compute using our implementation, took only 0.1 seconds using the fastdtw library, which was a 100x speedup. Therefore, we used this library for our model.
+
+
 
 \subsection{Training}
-For training our cRNN model on our word level annotated IAM dataset, we experimented with various hyperparameters to have the model converge to a good solution. Too small learning rates led the model to learn very slowly and settle for unoptimal local minima, while larger learning rates led to a divergent/oscillating loss. The Adam optimizer with a learning rate of 0.0001 along with a learning rate scheduler with decay of 0.96 every 10 epochs was found to be optimal. Each training epoch took around 35 minutes on a single 16GB NVIDIA Tesla P100 GPU (available thanks to Kaggle). The model weights were saved every 5 epochs, giving us checkpoints to continue from. We intend to train the model for a total of 100 epochs using a batch size of 32. While our model architecture allows for variable width input images, the images in one batch need to be of the same size to take advantage of parallelization.Since their is a wide variability in the width of word images, to not waste computational cycles on padding, we sort the images by their width and then group them into batches of similar width. This allows us to train the model on image batches of similar width, thus helping the model's convergence be smoother and more accurate.
+For training our cRNN model on our word level annotated IAM dataset, we experimented with various hyperparameters to have the model converge to a good solution. Too small learning rates led the model to learn very slowly and settle for unoptimal local minima, while larger learning rates led to a divergent/oscillating loss. The Adam optimizer with a learning rate of 0.0001 along with a learning rate scheduler with decay of 0.96 every 10 epochs was found to be optimal. Each training epoch took around 35 minutes on a single 16GB NVIDIA Tesla P100 GPU (available thanks to Kaggle). The model weights were saved every 5 epochs, giving us checkpoints to continue from. We intend to train the model for a total of 100 epochs using a batch size of 32. While our model architecture allows for variable width input images, the images in one batch need to be of the same size to take advantage of parallelization. Since their is a wide variability in the width of word images, to not waste computational cycles on padding, we sort the images by their width and then group them into batches of similar width. This allows us to train the model on image batches of similar width, thus helping the model's convergence be smoother and more accurate.
 
 \section{Results}
+Sections \ref{prelim-results} and \ref{deterministic-wor} contain our initial results for handwriting generation and animation as outlined in our initial project proposal. Due to lack of computational resources and time, the cRNN model for stroke trajectory recovery as explored by us recently, has yet to converge in its training. The initial results for the model can be seen in the notebooks and scripts submitted along with this report.
 
-\section{contribution}
+
+\section{Contribution}
+\subsection{Literature Review}
+\begin{itemize}
+    \item Anita: Handwriting Transformers \cite{HWT}, Handwriting Trajectory Recovery \cite{image2stroke-1Char}
+    \item Dhruv: Dynamic CRNN \cite{crnn}, Domain-Adversarial Network \cite{DANN}, Writing Order Recovery \cite{WOR}
+    \item Shambhu: Decoupled Style Descriptors \cite{BRUSH-paper}, Writing Order Recovery \cite{WOR}
+    \item Taha: GANwriting \cite{GAN-2}, TRACE: Stroke Recovery \cite{image2stroke-Archibald}, Strokes Trajectory Recovery \cite{img2stroke-multichar}
+\end{itemize}
+\subsection{Handwriting Transformer Model}
+\begin{itemize}
+    \item Anita: Model comparisons - Qualitative and Quantitative to decide which model to pick, read the paper\cite{HWT},  tested model with personalized handwriting, writing report
+    \item Dhruv: Read the paper\cite{HWT}, dove into architecture of HWT model, report writing
+    \item Shambhu : Model comparisons - Qualitative and Quantitative to decide which model to pick, read the paper\cite{HWT}, report writing
+    \item Taha: Read the paper\cite{HWT}, implemented splitting a paragraph image into words using cv2, dove into the author code and architecture, replicated results
+\end{itemize}
+
+\subsection{Handwriting Stroke Recovery}
+\begin{itemize}
+    \item Anita: Testing deterministic matlab code, Creating required dataset from IAM-Online Dataset, Data preprocessing, Visualization, report writing
+    \item Dhruv: Creating required dataset from IAM-Online Dataset, word-level splitting, Dataloader, Worked on DTW loss, report writing
+    \item Shambhu: Worked and implemented on the losses - DTW, Binary cross entropy for SoS and EoS, training, report writing
+    \item Taha: Implemented model architecture, resampled ground truth points, dataloader with efficient batching, testing and integrating the code, visualizing dtw alignment, read and found relevant papers, report writing
+\end{itemize}
+
+% \begin{itemize}
+%     \item Anita: Stalked githubs, found potential papers, panicked at every deadline, 
+%     \item Dhruv: Questioned feasibility of everything, competed with ChatGPT for best writer award lmaoo (laughing emoji laughing emoji)
+%     \item Shambu: provided gpu , somehow the only one who could run fid score lmao
+%     \item Taha: GOD , Carrried , 
+% \end{itemize}
+% I think we're done w contributions
+% gg ez A+ el mao
 
 %%%%%%%%% REFERENCES
 {\small
