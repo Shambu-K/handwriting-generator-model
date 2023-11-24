@@ -438,6 +438,11 @@ IAM-online dataset consist of handwriting images and strokes at line level. We u
   \item Finally we decided to generate the image directly from the stroke data. We used the stroke data to generate the image using the \texttt{draw} function in the \texttt{PIL} library. This method worked for all the images.
 \end{itemize}
 
+% display 1 image
+
+
+
+
 * Splitting line to words - Dhruv
 
 Furthermore, since our model's output sequence length is proportional to the input image width, we re-sample our ground truth stroke points to have the same number of points as the input image width. We also have our re-sampled points be equidistant to each other on the curve, so that the model can learn the stroke trajectory better. We do this by keeping track of the cumulative sum of the distances between consecutive points, and then re-sampling the points at equidistant intervals. Note that because of this re-sampling, our model does not truly learn temporal stroke reconstruction with the right velocity at different stroke points, but rather it learns the spatial trajectory of the stroke in a better manner.
