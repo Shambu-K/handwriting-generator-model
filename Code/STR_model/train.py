@@ -1,12 +1,12 @@
 import torch
 from tqdm import tqdm
 
-def train(model, train_loader, loss_function, optimizer, device):
+def train(model, train_loader, loss_function, optimizer, device, epoch=0):
     # Setting the model to training mode
     model.train() 
     length = len(train_loader)
     # Looping over each batch from the training set 
-    for batch_idx, (data, target) in tqdm(enumerate(train_loader)):  
+    for batch_idx, (data, target) in tqdm(enumerate(train_loader), desc=f'Epoch {epoch}', total=length):  
         # Setting the data and target to device
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()  
@@ -16,8 +16,10 @@ def train(model, train_loader, loss_function, optimizer, device):
         # Updating the model parameters
         optimizer.step() 
 
-        if batch_idx % max(1, int(length/10)) == 0:
-            print(f'Train Epoch: {batch_idx} \t Loss: {loss.item():.6f}') 
+        if batch_idx % 100 == 0:
+            print(f'   Batch: {batch_idx} | Loss: {loss.item()}')
+            
+    return loss.item()
 
 
 def model_evaluation(model, data_loader, loss_function, device):
@@ -34,14 +36,14 @@ def model_evaluation(model, data_loader, loss_function, device):
             loss += loss_function(output, target).item()
 
     avg_loss = loss/length
-    return avg_loss,
+    return avg_loss
 
 
 def model_fit(model, train_loader, loss_function, optimizer, scheduler, num_epochs, device, checkpoint):
     train_losses = []
     for epoch in range(num_epochs):
-        print("Epoch: ", epoch)
-        loss = train(model, train_loader, loss_function, optimizer, device)
+        print('===================================\n')
+        loss = train(model, train_loader, loss_function, optimizer, device, epoch+1)
         train_losses.append(loss)
         scheduler.step()
         
@@ -67,11 +69,11 @@ def main():
     torch.manual_seed(42)
     
     # Training parameters
-    num_epochs = 1000
+    num_epochs = 100
     bath_size = 16 # Archibald it is 32
-    checkpoint_interval = 20
+    checkpoint_interval = 1
     learning_rate = 0.0001
-    lr_decay = 0.9999 # Every 1000 epochs
+    lr_decay = 0.99
     
     # Load data
     root_dir = '../../DataSet/IAM-Online/Resized_Dataset/Train'

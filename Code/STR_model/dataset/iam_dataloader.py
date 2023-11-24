@@ -29,7 +29,7 @@ class HandwritingDataset(Dataset):
         self.images = []
         self.strokes = []
         assert len(self.image_filenames) == len(self.stroke_filenames), 'Number of images and strokes do not match'
-        for image_name, stroke_name in tqdm(zip(self.image_filenames, self.stroke_filenames), desc='Loading data'):
+        for image_name, stroke_name in tqdm(zip(self.image_filenames, self.stroke_filenames), desc='Loading data', total=len(self.image_filenames)):
             image = Image.open(os.path.join(self.image_dir, image_name)).convert('L')
             image = self.transform(image)
             stroke_data = np.load(os.path.join(self.stroke_dir, stroke_name))
