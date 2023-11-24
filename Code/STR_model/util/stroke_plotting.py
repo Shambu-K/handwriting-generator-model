@@ -84,10 +84,9 @@ def animate_word(word_strokes, color='black', title='', speed=1, save_path=None,
     lines = []
     pen = ax.scatter([], [], color='red')
     start = 0
-    
     def animate(i):
         nonlocal start
-        if split_strokes and word_strokes[i, 2] == 1 and i != 0:
+        if split_strokes and word_strokes[i, -2] == 1 and i != 0:
             start = i
         x = word_strokes[start:i+1, 0]
         y = word_strokes[start:i+1, 1]
@@ -99,8 +98,9 @@ def animate_word(word_strokes, color='black', title='', speed=1, save_path=None,
     
     ani = animation.FuncAnimation(fig, animate, frames=len(word_strokes), interval=30/speed, blit=True)
     if save_path is not None:
-        ani.save(save_path, writer='pillow', fps=30)
-    plt.close()
+        ani.save(save_path, writer='pillow', fps=40)
+        plt.close()
+    else: plt.show()
     
 def test_plots():
     stroke_path = '../../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_5488.npy'
