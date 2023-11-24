@@ -83,7 +83,7 @@ def test_dtw_warping_path():
     start = time.time()
     target_file = '../../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_42.npy'
     target = np.load(target_file)
-    pred = target + 10
+    pred = target + 2
     
     target = torch.tensor(target)
     pred = torch.tensor(pred)
@@ -120,6 +120,34 @@ def test_fastdtw():
     plot_dtw_path(pred, target, warping_path)
     # animate_dtw_path(pred, target, warping_path, save_path='../images/fastdtw_warping_path.gif')
 
+def test_resampled_strokes():
+    import sys
+    sys.path.append('../')
+    from dataset.gt_resampling import resample_strokes
+    from fastdtw import fastdtw
+    
+    target_file = '../../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_2.npy'
+    target = np.load(target_file)
+    target = np.delete(target, 2, axis=1) # Remove the third column (time)
+    pred = resample_strokes(target, len(target)*2)
+    pred[:, 0] += 4
+    pred[:, 1] += 2
+    
+    target = torch.tensor(target)
+    pred = torch.tensor(pred)
+    
+    print(f'(FastDTW on Resampled strokes):\nInput Shape: {pred.shape}')
+    print(f'Target Shape: {target.shape}')
+    
+    # Compute the warping path and the loss
+    loss, warping_path = fastdtw(pred[:,:2], target[:,:2], dist=2, radius=1) # radius = len(x) will give exact dtw loss as calculated using dynamic programming
+    print(f'Loss: {loss}')
+    print(f'Num of mappings: {len(warping_path)}')
+    
+    plot_dtw_path(pred, target, warping_path)
+    # animate_dtw_path(pred, target, warping_path, save_path='../images/fastdtw_warping_path.gif')
+
 if __name__ == '__main__':
     test_dtw_warping_path()
     test_fastdtw()
+    test_resampled_strokes()

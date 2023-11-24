@@ -62,7 +62,7 @@ def resample_strokes(word_strokes: np.ndarray, m: int,  num_EoS_extra: int=5) ->
             stroke_len = m - m_cur
         if stroke_len == 0: continue
         interpolated_word_strokes += interpolate_stroke(stroke, stroke_len, num_EoS_extra)
-    assert len(interpolated_word_strokes) == m, 'Number of interpolated points is not equal to m'
+    assert len(interpolated_word_strokes) == m, f'{len(interpolated_word_strokes)=} is not equal to {m=}'
         
     return np.array(interpolated_word_strokes)
     
