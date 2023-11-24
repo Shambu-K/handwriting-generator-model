@@ -98,7 +98,7 @@ def main():
     scheduler = lr_scheduler.ExponentialLR(optimizer, gamma=lr_decay)
     
     # Loss function
-    loss_function = STR_Loss(sos_weight=5)
+    loss_function = STR_Loss(sos_weight=20)
 
     # Fitting the model
     losses = model_fit(model, dataloader, loss_function, optimizer, scheduler, num_epochs, device, checkpoint_interval)
