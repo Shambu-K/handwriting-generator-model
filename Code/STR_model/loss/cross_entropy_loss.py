@@ -12,9 +12,9 @@ class SoS_Loss(nn.Module):
         # self.loss = nn.CrossEntropyLoss(weight=torch.tensor([1.0, self.weight], device=self.device))
         
     def forward(self, preds: torch.Tensor, targets: torch.Tensor, paths: list):
-        ''' pred: (batch_size, seq_len, 2)
-            target: (batch_size, seq_len, 2)'''
-        loss = torch.tensor(0.0, requires_grad=True, device=self.device)
+        ''' pred: (batch_size, seq_len)
+            target: (batch_size, seq_len) '''
+        loss = 0
         for batch, (pred, target, warping_path) in enumerate(zip(preds, targets, paths)):
             ground_truth = self.get_gt_for_pred(pred, target, warping_path)
             loss += self.loss(pred, ground_truth)
@@ -27,7 +27,7 @@ class SoS_Loss(nn.Module):
         gt = torch.zeros(pred.shape[0], device=self.device)
         target_SoS_done = set()
         for i, j in warping_path:
-            if target[j, 0] == 1 and j not in target_SoS_done:
+            if target[j] == 1 and j not in target_SoS_done:
                 gt[i] = 1
                 target_SoS_done.add(j)
         return gt
@@ -43,9 +43,9 @@ class EoS_Loss(nn.Module):
         # self.loss = nn.CrossEntropyLoss()
         
     def forward(self, preds: torch.Tensor, targets: torch.Tensor, paths: list):
-        ''' pred: (batch_size, seq_len, 2)
-            target: (batch_size, seq_len, 2)'''
-        loss = torch.tensor(0.0, requires_grad=True, device=self.device)
+        ''' pred: (batch_size, seq_len)
+            target: (batch_size, seq_len) '''
+        loss = 0
         for batch, (pred, target, warping_path) in enumerate(zip(preds, targets, paths)):
             ground_truth = self.get_gt_for_pred(pred, target, warping_path)
             loss += self.loss(pred, ground_truth)
@@ -56,6 +56,6 @@ class EoS_Loss(nn.Module):
         ''' All predictions that map to the EoS token in the target are considered as positive examples '''
         gt = torch.zeros(pred.shape[0], device=self.device)
         for i, j in warping_path:
-            if target[j, 1] == 1:
+            if target[j] == 1:
                 gt[i] = 1
         return gt

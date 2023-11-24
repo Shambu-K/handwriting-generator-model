@@ -59,7 +59,7 @@ def plot_losses(losses):
 def main():
     from model import STR_Model
     from dataset.iam_dataloader import HandwritingDataset
-    from loss.soft_dtw import SoftDTW
+    from loss.stroke_loss import STR_Loss
     from torch.optim import Adam, lr_scheduler
     from torch.utils.data import DataLoader
     
@@ -84,7 +84,7 @@ def main():
     scheduler = lr_scheduler.ExponentialLR(optimizer, gamma=lr_decay)
     
     # Loss function
-    loss_function = SoftDTW(gamma=0.1, normalize=True)
+    loss_function = STR_Loss(sos_weight=5)
 
     # Fitting the model
     losses = model_fit(model, dataloader, loss_function, optimizer, scheduler, num_epochs, device, checkpoint_interval)

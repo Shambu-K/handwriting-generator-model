@@ -8,7 +8,6 @@ from .dtw_loss import DTW_Loss
 class STR_Loss(nn.Module):
     def __init__(self, sos_weight: float = 5.0):
         super().__init__()
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.sos_weight = sos_weight
         self.dtw_loss = DTW_Loss()
         self.sos_loss = SoS_Loss(weight=self.sos_weight)
@@ -22,7 +21,7 @@ class STR_Loss(nn.Module):
         
         # Compute the losses for the different output features
         dtw_loss = self.dtw_loss(preds[:, :, :2], targets[:, :, :2], paths)
-        sos_loss = self.sos_loss(preds[:, :, 2:], targets[:, :, 2:], paths)
-        eos_loss = self.eos_loss(preds[:, :, 2:], targets[:, :, 2:], paths)
+        sos_loss = self.sos_loss(preds[:, :, 2], targets[:, :, 2], paths)
+        eos_loss = self.eos_loss(preds[:, :, 3], targets[:, :, 3], paths)
         
         return dtw_loss + sos_loss + eos_loss

@@ -53,10 +53,9 @@ def dtw_path(pred: torch.Tensor, target: torch.Tensor) -> tuple[torch.Tensor, to
 def batched_fastdtw_paths(pred_batch: torch.Tensor, target_batch: torch.Tensor) -> list:
     ''' Computes the DTW alignment between the input (batch_size x n x 2) and target sequences (batch_size x m x 2) and 
         returns the optimal warping path between the sequences '''
-    batch_size = pred.shape[0]
     warping_paths = []
     for (pred, target) in zip(pred_batch, target_batch):
-        warping_paths.append(fastdtw(pred, target, dist=2, radius=1)[1])
+        warping_paths.append(fastdtw(pred.cpu().detach(), target.cpu().detach(), dist=2)[1])
     return warping_paths
 
 def plot_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: torch.Tensor):

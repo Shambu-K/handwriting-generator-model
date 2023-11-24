@@ -7,7 +7,7 @@ class DTW_Loss(nn.Module):
     def forward(self, preds: torch.Tensor, targets: torch.Tensor, paths: list):
         ''' pred: (batch_size, seq_len, 2)
             target: (batch_size, seq_len, 2)'''
-        loss = torch.tensor(0.0, requires_grad=True)
+        loss = 0
         for batch, (pred, target, warping_path) in enumerate(zip(preds, targets, paths)):
             # Compute the L1 norm loss using the warping path (mapping)    
             for i, j in warping_path:
