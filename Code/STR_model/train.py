@@ -78,7 +78,7 @@ def main():
     
     # Model
     model = STR_Model().to(device)
-    # model.load_state_dict(torch.load('./checkpoints/STR_model_0_0.pth'))
+    model.load_state_dict(torch.load('./checkpoints/STR_model_2_19895.pth'))
     optimizer = Adam(model.parameters(), lr=learning_rate)
     scheduler = lr_scheduler.ExponentialLR(optimizer, gamma=lr_decay)
     

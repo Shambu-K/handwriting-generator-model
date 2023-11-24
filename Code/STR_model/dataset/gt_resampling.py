@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
-from util.get_word_strokes import get_strokes
+from util.stroke_plotting import get_strokes
 
 def interpolate_stroke(points: np.ndarray, m: int, num_EoS_extra: int=5) -> list[np.ndarray]:
     ''' Interpolate points along a single stroke.
@@ -98,4 +98,3 @@ def test_gt_resampling() -> None:
     
 if __name__ == '__main__':
     test_gt_resampling()
-# %%
