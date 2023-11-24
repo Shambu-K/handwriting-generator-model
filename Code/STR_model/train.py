@@ -1,6 +1,16 @@
 import torch
 from tqdm import tqdm
 import os
+from model import STR_Model
+from dataset.iam_dataloader import HandwritingDataset
+from loss.stroke_loss import STR_Loss
+from torch.optim import Adam, lr_scheduler
+from torch.utils.data import DataLoader
+from util.stroke_plotting import get_strokes, plot_word_strokes, plot_str_word_strokes, animate_word
+import matplotlib.pyplot as plt
+import numpy as np
+from fastdtw import fastdtw
+from loss.dtw_alignment import plot_dtw_path
 
 def train(model, train_loader, loss_function, optimizer, device, epoch=0):
     # Setting the model to training mode
@@ -43,12 +53,56 @@ def model_fit(model, train_loader, loss_function, optimizer, scheduler, num_epoc
         loss = train(model, train_loader, loss_function, optimizer, device, epoch+1)
         train_losses.append(loss)
         scheduler.step()
+        visualize_progress(model, train_loader, device)
         
         if epoch % checkpoint == 0:
             model_file = f'./checkpoints/STR_model_{epoch}_{int(loss)}.pth'
             torch.save(model.state_dict(), model_file) 
     
     return train_losses
+
+# Util functions
+
+def predict(model: STR_Model, input: torch.Tensor, device: torch.device) -> torch.Tensor:
+    ''' Predicts the output sequence for the input sequence.'''
+    model.eval()
+    with torch.no_grad():
+        output = model(input.to(device))
+    return output
+
+def get_strokes_from_model_output(pred) -> list:
+    ''' Get strokes from the model output.'''
+    print(pred.shape)
+    pred = pred.cpu().detach().numpy()
+    pred[:, 2] = np.round(pred[:, 2])
+    pred[:, 3] = np.round(pred[:, 3])
+    
+    return pred
+
+def display_img(img):
+    plt.imshow(img.squeeze(0).permute(1, 2, 0), cmap='gray')
+    plt.show()
+
+def visualize_progress(model, train_loader, device):
+    '''Display the input image and the predicted strokes.'''
+    img, stroke = next(iter(train_loader))
+    idx = np.random.randint(img.shape[0])
+    img = img[idx, :, :, :]
+    stroke = stroke[idx, :, :]
+    
+    # Predict the output sequence
+    pred = predict(model, img.unsqueeze(0), device)
+    pred = get_strokes_from_model_output(pred.squeeze(1))
+    
+    display_img(img)
+    plot_word_strokes(pred, split_strokes=False)
+    plot_str_word_strokes(pred, split_strokes=False)
+    animate_word(pred, speed=1, save_path='./predict.gif', split_strokes=False)
+    
+    distance, path = fastdtw(pred[:,:2], stroke[:,:2], dist=2)
+    print(f'Loss: {distance}')
+    plot_dtw_path(pred, stroke, path)
+    
 
 def plot_losses(losses):
     import matplotlib.pyplot as plt
@@ -70,12 +124,6 @@ def set_best_model(model, checkpoint_dir):
         print(f'Best model: {best_model}')
 
 def main():
-    from model import STR_Model
-    from dataset.iam_dataloader import HandwritingDataset
-    from loss.stroke_loss import STR_Loss
-    from torch.optim import Adam, lr_scheduler
-    from torch.utils.data import DataLoader
-    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(42)
     
