@@ -1,6 +1,4 @@
-import numpy as np
-
-def get_strokes(word_strokes: np.ndarray) -> list[np.ndarray]:
+def get_strokes(word_strokes) -> list:
     ''' Get strokes from a word with multiple strokes.'''
     word_strokes[-1, 3] = 1  # Set the EoS flag of the last point to 1
     strokes = []

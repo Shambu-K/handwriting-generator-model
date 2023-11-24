@@ -12,7 +12,8 @@ from tqdm import tqdm
 
 class HandwritingDataset(Dataset):
     ''' Dataset class for the handwriting dataset. Loads the data into memory and preprocesses them based on expected batch size.'''
-    def __init__(self, root_dir, batch_size=5, transform=ToTensor()):
+    def __init__(self, root_dir, batch_size=5, device=torch.device('cuda'), transform=ToTensor()):
+        self.device = device
         self.transform = transform
         self.batch_size = batch_size
         self.root_dir = root_dir
@@ -54,10 +55,11 @@ class HandwritingDataset(Dataset):
             for j, image in enumerate(images):
                 assert isinstance(image, torch.Tensor), 'Image is not a tensor'
                 assert image.shape[0] == 1 and image.shape[1] == 60, f'Image shape is wrong: {image.shape}'
-                self.images[i+j] = torch.nn.functional.pad(image, (0, max_width-image.shape[2]), mode='constant', value=0)
+                self.images[i+j] = torch.nn.functional.pad(image, (0, max_width-image.shape[2]), mode='constant', value=0).to(self.device)
             for j, stroke in enumerate(strokes):
                 assert stroke.shape[1] == 4, 'Stroke shape is wrong'
-                self.strokes[i+j] = resample_strokes(stroke, max_width, num_EoS_extra=5)
+                self.strokes[i+j] = torch.tensor(resample_strokes(stroke, max_width, num_EoS_extra=5)).to(self.device)
+                
     
     def __len__(self):
         return len(self.images)

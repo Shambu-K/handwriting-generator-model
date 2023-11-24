@@ -7,8 +7,6 @@ def train(model, train_loader, loss_function, optimizer, device, epoch=0):
     length = len(train_loader)
     # Looping over each batch from the training set 
     for batch_idx, (data, target) in tqdm(enumerate(train_loader), desc=f'Epoch {epoch}', total=length):  
-        # Setting the data and target to device
-        data, target = data.to(device), target.to(device)
         optimizer.zero_grad()  
         output = model(data)  
         loss = loss_function(output, target) 
@@ -29,8 +27,6 @@ def model_evaluation(model, data_loader, loss_function, device):
     length = len(data_loader.dataset)
     with torch.no_grad():
         for data, target in data_loader:
-            # Setting the data and target to device
-            data, target = data.to(device), target.to(device)
             output = model(data)
             # calculating loss
             loss += loss_function(output, target).item()
@@ -48,7 +44,7 @@ def model_fit(model, train_loader, loss_function, optimizer, scheduler, num_epoc
         scheduler.step()
         
         if epoch % checkpoint == 0:
-            model_file = f'checkpoints/STR_model_{epoch}_{int(loss)}.pth'
+            model_file = f'./checkpoints/STR_model_{epoch}_{int(loss)}.pth'
             torch.save(model.state_dict(), model_file) 
     
     return train_losses
@@ -77,11 +73,12 @@ def main():
     
     # Load data
     root_dir = '../../DataSet/IAM-Online/Resized_Dataset/Train'
-    dataset = HandwritingDataset(root_dir, bath_size)
+    dataset = HandwritingDataset(root_dir, bath_size, device)
     dataloader = DataLoader(dataset, batch_size=bath_size, shuffle=False, drop_last=True)
     
     # Model
     model = STR_Model().to(device)
+    # model.load_state_dict(torch.load('./checkpoints/STR_model_0_0.pth'))
     optimizer = Adam(model.parameters(), lr=learning_rate)
     scheduler = lr_scheduler.ExponentialLR(optimizer, gamma=lr_decay)
     
