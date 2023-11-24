@@ -1,5 +1,6 @@
 import torch
 from tqdm import tqdm
+import os
 
 def train(model, train_loader, loss_function, optimizer, device, epoch=0):
     # Setting the model to training mode
@@ -38,7 +39,7 @@ def model_evaluation(model, data_loader, loss_function, device):
 def model_fit(model, train_loader, loss_function, optimizer, scheduler, num_epochs, device, checkpoint):
     train_losses = []
     for epoch in range(num_epochs):
-        print('===================================\n')
+        print('=====================================================================\n')
         loss = train(model, train_loader, loss_function, optimizer, device, epoch+1)
         train_losses.append(loss)
         scheduler.step()
@@ -53,6 +54,20 @@ def plot_losses(losses):
     import matplotlib.pyplot as plt
     plt.plot(losses)
     plt.show()
+    
+def set_best_model(model, checkpoint_dir):
+    ''' Set the model with least loss as the best model. '''
+    best_loss = 100000
+    best_model = None
+    for file in os.listdir(checkpoint_dir):
+        if file.endswith('.pth'):
+            loss = int(file.split('_')[-1].split('.')[0])
+            if loss < best_loss:
+                best_loss = loss
+                best_model = file
+    if best_model is not None:
+        model.load_state_dict(torch.load(os.path.join(checkpoint_dir, best_model)))
+        print(f'Best model: {best_model}')
 
 def main():
     from model import STR_Model
@@ -78,7 +93,7 @@ def main():
     
     # Model
     model = STR_Model().to(device)
-    model.load_state_dict(torch.load('./checkpoints/STR_model_2_19895.pth'))
+    set_best_model(model, './checkpoints/')
     optimizer = Adam(model.parameters(), lr=learning_rate)
     scheduler = lr_scheduler.ExponentialLR(optimizer, gamma=lr_decay)
     
