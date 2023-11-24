@@ -66,7 +66,7 @@ def plot_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: torch.
     
     # Plot the warping path
     for i in range(len(warping_path)):
-        plt.plot([pred[warping_path[i][0], 0], target[warping_path[i][1], 0]], [pred[warping_path[i][0], 1], target[warping_path[i][1], 1]], c='k')
+        plt.plot([pred[warping_path[i][0], 0], target[warping_path[i][1], 0]], [pred[warping_path[i][0], 1], target[warping_path[i][1], 1]], c='k', alpha=0.7)
         
     plt.show()
     

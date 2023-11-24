@@ -18,46 +18,52 @@ def get_strokes(word_strokes) -> list:
     return strokes
 
 
-def plot_word_strokes(word_strokes, color='black', title=''):
+def plot_word_strokes(word_strokes, color='black', title='', split_strokes=True):
     ''' Plot the strokes of a word.'''
-    strokes = get_strokes(word_strokes)
+    if split_strokes: strokes = get_strokes(word_strokes)
+    else: strokes = [word_strokes]
     for stroke in strokes:
         plt.plot(stroke[:, 0], -stroke[:, 1], color=color)
     plt.title(title)
     plt.gca().set_aspect('equal')
     plt.show()
 
-    
-def plot_str_word_strokes(strokes, color='black', title=''):
+
+def plot_str_word_strokes(strokes, color='black', title='', split_strokes=True):
     ''' Plot the directions of the strokes of a word.'''
-        # Create a figure
-    fig, ax = plt.subplots(figsize=(6, 4))
+    # Create a figure
+    fig, ax = plt.subplots()
 
     x_min, x_max = np.min(strokes[:, 0]), np.max(strokes[:, 0])
     y_min, y_max = np.min(strokes[:, 1]), np.max(strokes[:, 1])
 
     # Set the axis limits
-    ax.set_xlim(x_min - 50, x_max + 50)
-    ax.set_ylim(y_min - 50, y_max + 50)
-
-    # Invert y-axis
+    ax.set_xlim(x_min - 10, x_max + 10)
+    ax.set_ylim(y_min - 5, y_max + 5)
+    ax.set_aspect('equal')
     ax.invert_yaxis()
+    
+    # Plot the SoS and EoS points
+    SoS_indices = np.where(strokes[:, 2] == 1)[0]
+    EoS_indices = np.where(strokes[:, 3] == 1)[0]
+    ax.scatter(strokes[SoS_indices, 0], strokes[SoS_indices, 1], color='green', label='Start of stroke', s=10)
+    ax.scatter(strokes[EoS_indices, 0], strokes[EoS_indices, 1], color='red', label='End of stroke', s=10)
 
-    start = 0
-    for i in range(len(strokes)):
-        if strokes[i, 2] == 1 and i != 0:  # start of a new stroke
-            dx = np.diff(strokes[start:i, 0])
-            dy = np.diff(strokes[start:i, 1])
-            ax.quiver(strokes[start:i-1, 0], strokes[start:i-1, 1], dx, dy, angles='xy', scale_units='xy', scale=1)
-            ax.scatter(*strokes[start, :2], color='green', s=10)  # start of stroke
-            ax.scatter(*strokes[i-1, :2], color='red', s=10)  # end of stroke
-            start = i
-        elif i == len(strokes) - 1:  # end of the last stroke
-            dx = np.diff(strokes[start:, 0])
-            dy = np.diff(strokes[start:, 1])
-            ax.quiver(strokes[start:i, 0], strokes[start:i, 1], dx, dy, angles='xy', scale_units='xy', scale=1)
-            ax.scatter(*strokes[start, :2], color='green', s=10)  # start of stroke
-            ax.scatter(*strokes[i, :2], color='red', s=10)  # end of stroke
+    def plot_stroke_segment(ax, strokes, start, end):
+        dx = np.diff(strokes[start:end, 0])
+        dy = np.diff(strokes[start:end, 1])
+        ax.quiver(strokes[start:end-1, 0], strokes[start:end-1, 1], dx, dy, angles='xy', scale_units='xy', scale=1)
+
+    if split_strokes:
+        start = 0
+        for i in range(len(strokes)):
+            if strokes[i, 2] == 1 and i != 0:  # start of a new stroke
+                plot_stroke_segment(ax, strokes, start, i)
+                start = i
+            elif i == len(strokes) - 1:  # end of the last stroke
+                plot_stroke_segment(ax, strokes, start, i)
+    else:
+        plot_stroke_segment(ax, strokes, 0, len(strokes))
 
     # Assign labels for the legend
     ax.scatter([], [], color='green', label='Start of stroke')
@@ -66,8 +72,7 @@ def plot_str_word_strokes(strokes, color='black', title=''):
     ax.legend()
     plt.show()
 
-
-def animate_word(word_strokes, color='black', title='', speed=1, save_path=None):
+def animate_word(word_strokes, color='black', title='', speed=1, save_path=None, split_strokes=True):
     ''' Animate the strokes of a word.'''
     fig, ax = plt.subplots()    
     padding = 10
@@ -85,7 +90,7 @@ def animate_word(word_strokes, color='black', title='', speed=1, save_path=None)
     
     def animate(i):
         nonlocal start
-        if word_strokes[i, 2] == 1 and i != 0:
+        if split_strokes and word_strokes[i, 2] == 1 and i != 0:
             start = i
         x = word_strokes[start:i+1, 0]
         y = word_strokes[start:i+1, 1]
@@ -99,7 +104,6 @@ def animate_word(word_strokes, color='black', title='', speed=1, save_path=None)
     if save_path is not None:
         ani.save(save_path, writer='pillow', fps=30)
     plt.show()
-    
     
 def test_plots():
     stroke_path = '../../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_5488.npy'
