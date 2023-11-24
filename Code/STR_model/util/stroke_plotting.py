@@ -100,7 +100,7 @@ def animate_word(word_strokes, color='black', title='', speed=1, save_path=None,
     ani = animation.FuncAnimation(fig, animate, frames=len(word_strokes), interval=30/speed, blit=True)
     if save_path is not None:
         ani.save(save_path, writer='pillow', fps=30)
-    plt.show()
+    plt.close()
     
 def test_plots():
     stroke_path = '../../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_5488.npy'

@@ -23,6 +23,7 @@ def get_strokes_from_model_output(pred) -> list:
     return pred
 
 def display_img(img, title):
+    plt.figure(figsize=(2, 2))
     plt.title(title)
     plt.imshow(img[0], cmap='gray')
     plt.show()
@@ -45,15 +46,15 @@ def visualize_progress(model, device):
     # Predict the output sequence
     pred = predict(model, img, device)
     pred = get_strokes_from_model_output(pred.squeeze(1))
+    distance, path = fastdtw(pred[:,:2], stroke[:,:2], dist=2)
     
     display_img(img.cpu().detach().numpy().squeeze(0), title='Sample image')
     plot_word_strokes(stroke, title='Ground truth strokes', split_strokes=True)
-    plot_word_strokes(pred, title='Predicted strokes', split_strokes=False)
-    plot_str_word_strokes(pred, title='Predicted strokes directions', split_strokes=False)
+    # plot_word_strokes(pred, title='Predicted strokes', split_strokes=False)
+    plot_str_word_strokes(pred, title='Predicted strokes with directions', split_strokes=False)
     animate_word(pred, speed=1, save_path='./predict.gif', title='Animated predicted strokes', split_strokes=False)
-    
-    distance, path = fastdtw(pred[:,:2], stroke[:,:2], dist=2)
     plot_dtw_path(pred, stroke, path)
+    
     
 def plot_losses(losses):
     plt.plot(losses)
