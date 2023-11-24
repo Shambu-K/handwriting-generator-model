@@ -9,7 +9,7 @@ The project was done as a part of the course AI5100: Deep Learning, Fall 2023 at
 * [Dhruv Srikanth](https://github.com/Dhruv-Srikanth)
 
 ## Description
-Our model takes the style of a writer and a prompt as input and animates the prompt given in the handwriting of the writer as output.
+Our model takes the style of a writer and a prompt as input and animates the prompt given, in the style of the writer as output.
 
 ## References
 
