@@ -67,7 +67,8 @@ def plot_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: torch.
     # Plot the warping path
     for i in range(len(warping_path)):
         plt.plot([pred[warping_path[i][0], 0], target[warping_path[i][1], 0]], [pred[warping_path[i][0], 1], target[warping_path[i][1], 1]], c='k', alpha=0.7)
-        
+    
+    plt.gca().set_aspect('equal')
     plt.show()
     
 def animate_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: torch.Tensor, save_path: str = None):
@@ -78,7 +79,7 @@ def animate_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: tor
     # Plot the input and target sequences
     plt.scatter(pred[:, 0], pred[:, 1], c='r', label='Pred')
     plt.scatter(target[:, 0], target[:, 1], c='b', label='Target')
-    
+    plt.title('DTW Warping Path')
     def animate(i):
         plt.plot([pred[warping_path[i][0], 0], target[warping_path[i][1], 0]], [pred[warping_path[i][0], 1], target[warping_path[i][1], 1]], c='k')
         

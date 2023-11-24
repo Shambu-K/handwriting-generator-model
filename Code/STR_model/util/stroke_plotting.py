@@ -5,13 +5,13 @@ import matplotlib.animation as animation
 
 def get_strokes(word_strokes) -> list:
     ''' Get strokes from a word with multiple strokes.'''
-    word_strokes[-1, 3] = 1  # Set the EoS flag of the last point to 1
+    word_strokes[-1, -1] = 1  # Set the EoS flag of the last point to 1
     strokes = []
     start = -1
     for cur in range(word_strokes.shape[0]):
-        if word_strokes[cur, 2] == 1:
+        if word_strokes[cur, -2] == 1:
             start = cur
-        if word_strokes[cur, 3] == 1 and start != -1:
+        if word_strokes[cur, -1] == 1 and start != -1:
             strokes.append(word_strokes[start:cur+1])
             start = -1
             
@@ -33,7 +33,7 @@ def plot_str_word_strokes(strokes, color='black', title='', split_strokes=True):
     ''' Plot the directions of the strokes of a word.'''
     # Create a figure
     fig, ax = plt.subplots()
-
+    plt.title(title)
     x_min, x_max = np.min(strokes[:, 0]), np.max(strokes[:, 0])
     y_min, y_max = np.min(strokes[:, 1]), np.max(strokes[:, 1])
 
@@ -44,8 +44,8 @@ def plot_str_word_strokes(strokes, color='black', title='', split_strokes=True):
     ax.invert_yaxis()
     
     # Plot the SoS and EoS points
-    SoS_indices = np.where(strokes[:, 2] == 1)[0]
-    EoS_indices = np.where(strokes[:, 3] == 1)[0]
+    SoS_indices = np.where(strokes[:, -2] == 1)[0]
+    EoS_indices = np.where(strokes[:, -1] == 1)[0]
     ax.scatter(strokes[SoS_indices, 0], strokes[SoS_indices, 1], color='green', label='Start of stroke', s=10)
     ax.scatter(strokes[EoS_indices, 0], strokes[EoS_indices, 1], color='red', label='End of stroke', s=10)
 
@@ -57,7 +57,7 @@ def plot_str_word_strokes(strokes, color='black', title='', split_strokes=True):
     if split_strokes:
         start = 0
         for i in range(len(strokes)):
-            if strokes[i, 2] == 1 and i != 0:  # start of a new stroke
+            if strokes[i, -2] == 1 and i != 0:  # start of a new stroke
                 plot_stroke_segment(ax, strokes, start, i)
                 start = i
             elif i == len(strokes) - 1:  # end of the last stroke
@@ -65,16 +65,13 @@ def plot_str_word_strokes(strokes, color='black', title='', split_strokes=True):
     else:
         plot_stroke_segment(ax, strokes, 0, len(strokes))
 
-    # Assign labels for the legend
-    ax.scatter([], [], color='green', label='Start of stroke')
-    ax.scatter([], [], color='red', label='End of stroke')
-
     ax.legend()
     plt.show()
 
 def animate_word(word_strokes, color='black', title='', speed=1, save_path=None, split_strokes=True):
     ''' Animate the strokes of a word.'''
-    fig, ax = plt.subplots()    
+    fig, ax = plt.subplots()
+    fig.suptitle(title)
     padding = 10
     xlim = (word_strokes[:, 0].min()-padding, word_strokes[:, 0].max()+padding)
     ylim = (word_strokes[:, 1].min()-padding//2, word_strokes[:, 1].max()+padding//2)
