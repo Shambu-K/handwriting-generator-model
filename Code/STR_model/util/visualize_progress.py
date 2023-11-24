@@ -28,13 +28,13 @@ def display_img(img, title):
     plt.imshow(img[0], cmap='gray')
     plt.show()
 
-def visualize_progress(model, device):
+def visualize_progress(model, device, path):
     '''Display the input image and the predicted strokes.'''
     num_images = 40000
     img_id = np.random.randint(0, num_images)
     print(f'Image id: {img_id}')
-    img_path = f'../../DataSet/IAM-Online/Resized_Dataset/Train/Images/image_{img_id}.png'
-    stroke_path = f'../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_{img_id}.npy'
+    img_path = f'{path}/Images/image_{img_id}.png'
+    stroke_path = f'{path}/Strokes/stroke_{img_id}.npy'
     stroke = np.load(stroke_path)
     stroke = np.delete(stroke, 2, 1)
 
@@ -72,7 +72,8 @@ def main():
     model = STR_Model().to(device)
     model.load_state_dict(torch.load(model_path))
     
-    visualize_progress(model, device)
+    data_path = '../../../DataSet/IAM-Online/Resized_Dataset/Train/'
+    visualize_progress(model, device, data_path)
     
 if __name__ == '__main__':
     main()
