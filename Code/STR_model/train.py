@@ -68,7 +68,7 @@ def main():
     
     # Training parameters
     num_epochs = 1000
-    bath_size = 32
+    bath_size = 16 # Archibald it is 32
     checkpoint_interval = 20
     learning_rate = 0.0001
     lr_decay = 0.9999 # Every 1000 epochs
