@@ -8,11 +8,12 @@ Hence we use fastdtw (https://cs.fit.edu/~pkc/papers/tdm04.pdf) which works in O
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+from fastdtw import fastdtw
 import time
 
 def dtw_path(pred: torch.Tensor, target: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
     ''' Computes the DTW cost between the (unbatched) input (n x 2) and target sequences (m x 2) and 
-    returns the optimal warping path between the sequences (the mapping between the sequences) '''
+        returns the optimal warping path between the sequences (the mapping between the sequences) '''
     n = pred.shape[0]
     m = target.shape[0]
     
@@ -49,6 +50,14 @@ def dtw_path(pred: torch.Tensor, target: torch.Tensor) -> tuple[torch.Tensor, to
     
     return warping_path, loss
 
+def batched_fastdtw_paths(pred_batch: torch.Tensor, target_batch: torch.Tensor) -> list:
+    ''' Computes the DTW alignment between the input (batch_size x n x 2) and target sequences (batch_size x m x 2) and 
+        returns the optimal warping path between the sequences '''
+    batch_size = pred.shape[0]
+    warping_paths = []
+    for (pred, target) in zip(pred_batch, target_batch):
+        warping_paths.append(fastdtw(pred, target, dist=2, radius=1)[1])
+    return warping_paths
 
 def plot_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: torch.Tensor):
     # Plot the input and target sequences
@@ -100,7 +109,6 @@ def test_dtw_warping_path():
     # animate_dtw_path(pred, target, warping_path, save_path='../images/dtw_warping_path.gif')
     
 def test_fastdtw():
-    from fastdtw import fastdtw
     start = time.time()
     target_file = '../../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_42.npy'
     target = np.load(target_file)
@@ -124,7 +132,6 @@ def test_resampled_strokes():
     import sys
     sys.path.append('../')
     from dataset.gt_resampling import resample_strokes
-    from fastdtw import fastdtw
     
     target_file = '../../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_2.npy'
     target = np.load(target_file)
