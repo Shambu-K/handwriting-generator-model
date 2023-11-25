@@ -23,7 +23,8 @@ def plot_word_strokes(word_strokes, color='black', title='', split_strokes=True)
     if split_strokes: strokes = get_strokes(word_strokes)
     else: strokes = [word_strokes]
     for stroke in strokes:
-        plt.plot(stroke[:, 0], -stroke[:, 1], color=color)
+        plt.plot(stroke[:, 0], stroke[:, 1], color=color)
+    plt.gca().invert_yaxis()
     plt.title(title)
     plt.gca().set_aspect('equal')
     plt.show()

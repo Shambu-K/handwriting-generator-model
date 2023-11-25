@@ -4,7 +4,7 @@ Time complexity of this implementation is O(n*m), where n and m are the lengths 
 Since we are using python loops, this implementation is very slow and doesnt take full advantage of possible vectorizations in the implementation.
 Hence we use fastdtw (https://cs.fit.edu/~pkc/papers/tdm04.pdf) which works in O(n) time and is implemented in the fastdtw package.
 '''
-
+# %%
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,8 +58,9 @@ def batched_fastdtw_paths(pred_batch: torch.Tensor, target_batch: torch.Tensor) 
         warping_paths.append(fastdtw(pred.cpu().detach(), target.cpu().detach(), dist=2)[1])
     return warping_paths
 
-def plot_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: torch.Tensor):
+def plot_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: torch.Tensor, title: str = 'DTW Warping Path'):
     # Plot the input and target sequences
+    plt.title(title)
     plt.scatter(pred[:, 0], pred[:, 1], c='r', label='Pred')
     plt.scatter(target[:, 0], target[:, 1], c='b', label='Target')
     plt.legend()
@@ -68,6 +69,7 @@ def plot_dtw_path(pred: torch.Tensor, target: torch.Tensor, warping_path: torch.
     for i in range(len(warping_path)):
         plt.plot([pred[warping_path[i][0], 0], target[warping_path[i][1], 0]], [pred[warping_path[i][0], 1], target[warping_path[i][1], 1]], c='k', alpha=0.7)
     
+    plt.gca().invert_yaxis()
     plt.gca().set_aspect('equal')
     plt.show()
     
@@ -92,7 +94,7 @@ def test_dtw_warping_path():
     start = time.time()
     target_file = '../../../DataSet/IAM-Online/Resized_Dataset/Train/Strokes/stroke_42.npy'
     target = np.load(target_file)
-    pred = target + 2
+    pred = target + 10
     
     target = torch.tensor(target)
     pred = torch.tensor(pred)
@@ -138,7 +140,7 @@ def test_resampled_strokes():
     target = np.delete(target, 2, axis=1) # Remove the third column (time)
     pred = resample_strokes(target, len(target)*2)
     pred[:, 0] += 4
-    pred[:, 1] += 2
+    pred[:, 1] -= 2
     
     target = torch.tensor(target)
     pred = torch.tensor(pred)
