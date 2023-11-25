@@ -52,8 +52,8 @@ def visualize_progress(model, device, path):
     distance, path = fastdtw(pred[:,:2], stroke[:,:2], dist=2)
     
     display_img(img.cpu().detach().numpy().squeeze(0), title='Sample image')
-    plot_word_strokes(stroke, title='Ground truth strokes', split_strokes=True)
-    plot_word_strokes(pred, title='Predicted strokes', split_strokes=False)
+    # plot_word_strokes(stroke, title='Ground truth strokes', split_strokes=True)
+    # plot_word_strokes(pred, title='Predicted strokes', split_strokes=False)
     plot_str_word_strokes(pred, title='Predicted strokes with directions', split_strokes=False)
     animate_word(pred, speed=1, save_path=f'./predict_{img_id}.gif', title='Animated predicted strokes', split_strokes=False)
     plot_dtw_path(pred, stroke, path, title='DTW Warping Path')

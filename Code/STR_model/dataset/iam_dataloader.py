@@ -6,17 +6,18 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import ToTensor
 import sys
-# sys.path.append('')
-from .gt_resampling import resample_strokes
+sys.path.append('../')
+from dataset.gt_resampling import resample_strokes
 from tqdm import tqdm
 
 class HandwritingDataset(Dataset):
     ''' Dataset class for the handwriting dataset. Loads the data into memory and preprocesses them based on expected batch size.'''
-    def __init__(self, root_dir, batch_size=5, device=torch.device('cuda'), transform=ToTensor()):
+    def __init__(self, root_dir, batch_size=5, device=torch.device('cuda'), transform=ToTensor(), max_allowed_width=400):
         self.device = device
         self.transform = transform
         self.batch_size = batch_size
         self.root_dir = root_dir
+        self.max_allowed_width = max_allowed_width
         self.image_dir = os.path.join(root_dir, 'Images')
         self.stroke_dir = os.path.join(root_dir, 'Strokes')
         self.image_filenames = sorted([f for f in os.listdir(self.image_dir) if f.endswith('.png')])
@@ -35,6 +36,7 @@ class HandwritingDataset(Dataset):
             image = self.transform(image)
             stroke_data = np.load(os.path.join(self.stroke_dir, stroke_name))
             stroke_data = np.delete(stroke_data, 2, axis=1) # Remove the third column (time)
+            if image.shape[2] > self.max_allowed_width: continue
             self.images.append(image)
             self.strokes.append(stroke_data)
         
@@ -72,13 +74,14 @@ class HandwritingDataset(Dataset):
 # %%
 def test_dataset():
     root_dir = '../../../DataSet/IAM-Online/Resized_Dataset/Train'
-    batch_size = 5
+    batch_size = 16
     dataset = HandwritingDataset(root_dir, batch_size)
     print(len(dataset))
     
     train_loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=False) # Shuffle false since images are sorted by width
-    for image, stroke in train_loader:
-        print(image.shape, stroke.shape)
+    for batch, (image, stroke_data) in enumerate(train_loader):
+        if batch % 100 == 0:
+            print(f'Batch {batch:<4}: Width {image.shape[3]}')
     
 if __name__ == '__main__':
     test_dataset()
