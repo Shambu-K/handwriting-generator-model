@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 class ConvReluLayer(nn.Module):
@@ -49,7 +50,7 @@ class STR_Model(nn.Module):
         # Make width the "time" seq2seq dimension
         x = x.permute(2, 0, 1) # W/4 x b x 1024
         return x
-    
+        
     def forward(self, x):
         '''Input: batch x 1 x 60 x W
            Output: W/4 x batch x 4'''
@@ -59,7 +60,10 @@ class STR_Model(nn.Module):
         T, b, h = x.size()        # W/4 x b x 2*128
         x = x.view(T * b, h)
         x = self.embedding(x)     # Output: W/4*b x 4
-        return x.view(T, b, 4)    # Output: W/4 x b x 4
+        x = x.view(T, b, 4)    # Output: W/4 x b x 4
+        # x is relative cordinates. Make it absolute by taking the cumulative sum
+        x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0) # Out
+        return x
         
 class STR_Model_Longer_512(nn.Module):
     '''Stroke Trajectory Recovery model that outputs a sequence of 4D vectors of size W x 4'''
@@ -106,7 +110,11 @@ class STR_Model_Longer_512(nn.Module):
         T, b, h = x.size()
         x = x.view(T * b, h)
         x = self.embedding(x)
-        return x.view(T, b, 4)
+        # return x.view(T, b, 4)
+        x = x.view(T, b, 4)    # Output: W x b x 4
+        # x is relative cordinates. Make it absolute by taking the cumulative sum
+        x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0) # Out
+        return x
     
 class STR_Model_Longer_1024(nn.Module):
     '''Stroke Trajectory Recovery model that outputs a sequence of 4D vectors of size W x 4'''
@@ -153,4 +161,8 @@ class STR_Model_Longer_1024(nn.Module):
         T, b, h = x.size()
         x = x.view(T * b, h)
         x = self.embedding(x)
-        return x.view(T, b, 4)
+        # return x.view(T, b, 4)
+        x = x.view(T, b, 4)    # Output: W x b x 4
+        # x is relative cordinates. Make it absolute by taking the cumulative sum
+        x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0)
+        return x
