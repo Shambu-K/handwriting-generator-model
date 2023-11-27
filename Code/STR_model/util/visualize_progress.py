@@ -40,7 +40,7 @@ def visualize_progress(model, device, dataloader, epoch=0):
     
     # Predict the output sequence
     pred = predict(model, img, device)
-    pred = get_strokes_from_model_output(pred.squeeze(1))
+    pred = get_strokes_from_model_output(pred.squeeze(0))
     
     img = img[0].cpu().detach().numpy()
     stroke = stroke[0].cpu().detach().numpy()

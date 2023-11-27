@@ -5,7 +5,7 @@ from .dtw_alignment import batched_fastdtw_paths
 from .cross_entropy_loss import SoS_Loss, EoS_Loss
 from .dtw_loss import DTW_Loss
 
-class STR_Loss(nn.Module):
+class STR_Loss_DTW(nn.Module):
     def __init__(self, sos_weight: float = 5.0):
         super().__init__()
         self.sos_weight = sos_weight
@@ -25,3 +25,22 @@ class STR_Loss(nn.Module):
         eos_loss = self.eos_loss(preds[:, :, 3], targets[:, :, 3], paths)
         
         return dtw_loss + sos_loss + eos_loss
+    
+class STR_Loss_Identity(nn.Module):
+    def __init__(self, sos_weight: float = 5.0):
+        super().__init__()
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.sos_weight = sos_weight
+        self.dtw_loss = nn.L1Loss()
+        # self.sos_loss = nn.BCELoss(weight=torch.tensor([1.0, self.sos_weight], device=self.device))
+        # self.eos_loss = nn.BCELoss()
+        
+    def forward(self, preds: torch.Tensor, targets: torch.Tensor):
+        ''' pred: (batch_size, seq_len, 4)
+            target: (batch_size, seq_len, 4)'''
+        # Compute the losses for the different output features
+        dtw_loss = self.dtw_loss(preds[:, :, :2], targets[:, :, :2])
+        # sos_loss = self.sos_loss(preds[:, :, 2], targets[:, :, 2])
+        # eos_loss = self.eos_loss(preds[:, :, 3], targets[:, :, 3])
+        return dtw_loss
+        # return dtw_loss + sos_loss + eos_loss

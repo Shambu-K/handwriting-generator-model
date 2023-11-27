@@ -53,7 +53,7 @@ class STR_Model(nn.Module):
         
     def forward(self, x):
         '''Input: batch x 1 x 60 x W
-           Output: W/4 x batch x 4'''
+           Output: batch x W/4 x 4'''
         x = self.cnn_branch(x)
         x = self.postprocess_cnn(x)
         x, _ = self.rnn_branch(x) # Output: W/4 x b x 2*128
@@ -62,8 +62,8 @@ class STR_Model(nn.Module):
         x = self.embedding(x)     # Output: W/4*b x 4
         x = x.view(T, b, 4)    # Output: W/4 x b x 4
         # x is relative cordinates. Make it absolute by taking the cumulative sum
-        x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0) # Out
-        return x
+        x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0)
+        return x.transpose(0, 1) # Output: b x W/4 x 4
         
 class STR_Model_Longer_512(nn.Module):
     '''Stroke Trajectory Recovery model that outputs a sequence of 4D vectors of size W x 4'''
@@ -103,7 +103,7 @@ class STR_Model_Longer_512(nn.Module):
     
     def forward(self, x):
         '''Input: batch x 1 x 60 x W
-           Output: W x batch x 4'''
+           Output: batch x W x 4'''
         x = self.cnn_branch(x)
         x = self.postprocess_cnn(x)
         x, _ = self.rnn_branch(x)
@@ -114,7 +114,7 @@ class STR_Model_Longer_512(nn.Module):
         x = x.view(T, b, 4)    # Output: W x b x 4
         # x is relative cordinates. Make it absolute by taking the cumulative sum
         x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0) # Out
-        return x
+        return x.transpose(0, 1) # Output: b x W x 4
     
 class STR_Model_Longer_1024(nn.Module):
     '''Stroke Trajectory Recovery model that outputs a sequence of 4D vectors of size W x 4'''
@@ -154,7 +154,7 @@ class STR_Model_Longer_1024(nn.Module):
     
     def forward(self, x):
         '''Input: batch x 1 x 60 x W
-           Output: W x batch x 4'''
+           Output: batch x W x 4'''
         x = self.cnn_branch(x)
         x = self.postprocess_cnn(x)
         x, _ = self.rnn_branch(x)
@@ -165,4 +165,4 @@ class STR_Model_Longer_1024(nn.Module):
         x = x.view(T, b, 4)    # Output: W x b x 4
         # x is relative cordinates. Make it absolute by taking the cumulative sum
         x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0)
-        return x
+        return x.transpose(0, 1)
