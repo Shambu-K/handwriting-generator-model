@@ -31,33 +31,27 @@ def display_img(img, title):
     plt.imshow(img[0], cmap='gray')
     plt.show()
 
-def visualize_progress(model, device, path):
+def visualize_progress(model, device, dataloader, epoch=0):
     '''Display the input image and the predicted strokes.'''
-    num_images = 40000
-    # img_id = np.random.randint(0, num_images)
-    img_id = 673
-    print(f'Image id: {img_id}')
-    img_path = f'{path}/Images/image_{img_id}.png'
-    stroke_path = f'{path}/Strokes/stroke_{img_id}.npy'
-    stroke = np.load(stroke_path)
-    stroke = np.delete(stroke, 2, 1)
-
-    # Load the image
-    img = Image.open(img_path).convert('L')
-    img = ToTensor()(img)
-    img.unsqueeze_(0)
+    batch_id = np.random.randint(0, len(dataloader))
+    for i, (img, stroke) in enumerate(dataloader):
+        if i == batch_id:
+            break
     
     # Predict the output sequence
     pred = predict(model, img, device)
     pred = get_strokes_from_model_output(pred.squeeze(1))
+    
+    img = img[0].cpu().detach().numpy()
+    stroke = stroke[0].cpu().detach().numpy()
     distance, path = fastdtw(pred[:,:2], stroke[:,:2], dist=2)
     
-    display_img(img.cpu().detach().numpy().squeeze(0), title='Sample image')
+    display_img(img, title='Sample image')
     # plot_word_strokes(stroke, title='Ground truth strokes', split_strokes=True)
     # plot_word_strokes(pred, title='Predicted strokes', split_strokes=False)
     plot_str_word_strokes(pred, title='Predicted strokes with directions', split_strokes=False)
-    animate_word(pred, speed=1, save_path=f'./predict_{img_id}.gif', title='Animated predicted strokes', split_strokes=False)
-    plot_dtw_path(pred, stroke, path, title='DTW Warping Path')
+    animate_word(pred, speed=1, save_path=f'./predict_{epoch}.gif', title='Animated predicted strokes', split_strokes=False)
+    plot_dtw_path(pred, stroke, path, title=f'DTW Warping Path (distance={distance})')
     
     
 def plot_losses(losses):
@@ -69,16 +63,19 @@ def main():
     import sys
     sys.path.append('../')
     from model import STR_Model
+    from dataset.iam_dataloader import HandwritingDataset
+    from torch.utils.data import DataLoader
     
     # Load the model
-    model_path = '../checkpoints/STR_model_0_8465.pth'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = STR_Model().to(device)
-    model.load_state_dict(torch.load(model_path))
+    # model_path = '../checkpoints/STR_model_0_8465.pth'
+    # model.load_state_dict(torch.load(model_path))
     
-    data_path = '../../../DataSet/IAM-Online/Resized_Dataset/Train/'
-    visualize_progress(model, device, data_path)
-    
+    data_path = '../../../DataSet/IAM-Online/Resized_Dataset/Train'
+    dataset = HandwritingDataset(data_path, 1, device, max_allowed_width=400)
+    dataloader = DataLoader(dataset, batch_size=1, shuffle=False, drop_last=True)
+    visualize_progress(model, device, dataloader)
+
 if __name__ == '__main__':
     main()
-# %%
