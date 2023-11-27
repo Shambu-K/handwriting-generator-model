@@ -20,6 +20,7 @@ demo_output
 DataSet/*
 !DataSet/*.jpeg
 *.pth
+images
 
 # Python intermediate files
 *.pyc
