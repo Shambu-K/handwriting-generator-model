@@ -35,7 +35,7 @@ def visualize_progress(model, device, path):
     '''Display the input image and the predicted strokes.'''
     num_images = 40000
     # img_id = np.random.randint(0, num_images)
-    img_id = 123
+    img_id = 673
     print(f'Image id: {img_id}')
     img_path = f'{path}/Images/image_{img_id}.png'
     stroke_path = f'{path}/Strokes/stroke_{img_id}.npy'
