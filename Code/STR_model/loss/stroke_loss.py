@@ -6,6 +6,7 @@ from .cross_entropy_loss import SoS_Loss, EoS_Loss
 from .dtw_loss import DTW_Loss
 
 class STR_Loss_DTW(nn.Module):
+    ''' Uses the DTW alignment between the input and target sequences to compute the loss. '''
     def __init__(self, sos_weight: float = 5.0):
         super().__init__()
         self.sos_weight = sos_weight
@@ -24,9 +25,10 @@ class STR_Loss_DTW(nn.Module):
         sos_loss = self.sos_loss(preds[:, :, 2], targets[:, :, 2], paths)
         eos_loss = self.eos_loss(preds[:, :, 3], targets[:, :, 3], paths)
         
-        return dtw_loss + sos_loss + eos_loss
+        return dtw_loss + sos_loss + eos_loss, dtw_loss, sos_loss, eos_loss
     
 class STR_Loss_Identity(nn.Module):
+    ''' Uses an identity alignment between the input and target sequences to compute the loss. '''
     def __init__(self, sos_weight: float = 5.0):
         super().__init__()
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

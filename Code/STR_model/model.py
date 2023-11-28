@@ -17,8 +17,9 @@ class ConvReluLayer(nn.Module):
 # Possible error: First convolution needs to be coordconv
 class STR_Model(nn.Module):
     '''Main Stroke Trajectory Recovery model. Takes in images on size 60 x W and outputs a sequence of 4D vectors of size W/4 x 4'''
-    def __init__(self):
+    def __init__(self, relative_coords=True):
         super(STR_Model, self).__init__()
+        self.relative_coords = relative_coords
     
         self.max_pool_2x2 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
         self.max_pool_2x1 = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 1), padding=(0, 1), dilation=1, ceil_mode=False)
@@ -62,14 +63,16 @@ class STR_Model(nn.Module):
         x = self.embedding(x)     # Output: W/4*b x 4
         x = x.view(T, b, 4)    # Output: W/4 x b x 4
         # x is relative cordinates. Make it absolute by taking the cumulative sum
-        x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0)
+        if self.relative_coords:
+            x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0) # Output: W/4 x b x 2
         return x.transpose(0, 1) # Output: b x W/4 x 4
         
 class STR_Model_Longer_512(nn.Module):
     '''Stroke Trajectory Recovery model that outputs a sequence of 4D vectors of size W x 4'''
-    def __init__(self):
+    def __init__(self, relative_coords=True):
         super(STR_Model_Longer_512, self).__init__()
-    
+        self.relative_coords = relative_coords
+
         self.max_pool_2x2 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
         self.max_pool_2x1 = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 1), padding=(0, 1), dilation=1, ceil_mode=False)
         self.cnn_branch = nn.Sequential( # Input: batch x 1 x 60 x W
@@ -110,17 +113,20 @@ class STR_Model_Longer_512(nn.Module):
         T, b, h = x.size()
         x = x.view(T * b, h)
         x = self.embedding(x)
-        # return x.view(T, b, 4)
         x = x.view(T, b, 4)    # Output: W x b x 4
+
         # x is relative cordinates. Make it absolute by taking the cumulative sum
-        x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0) # Out
+        if self.relative_coords:
+            x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0) # Output: W x b x 2
+        
         return x.transpose(0, 1) # Output: b x W x 4
     
 class STR_Model_Longer_1024(nn.Module):
     '''Stroke Trajectory Recovery model that outputs a sequence of 4D vectors of size W x 4'''
-    def __init__(self):
+    def __init__(self, relative_coords=True):
         super(STR_Model_Longer_1024, self).__init__()
-    
+        self.relative_coords = relative_coords
+
         self.max_pool_2x2 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
         self.max_pool_2x1 = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 1), padding=(0, 1), dilation=1, ceil_mode=False)
         self.cnn_branch = nn.Sequential( # Input: batch x 1 x 60 x W
@@ -164,5 +170,6 @@ class STR_Model_Longer_1024(nn.Module):
         # return x.view(T, b, 4)
         x = x.view(T, b, 4)    # Output: W x b x 4
         # x is relative cordinates. Make it absolute by taking the cumulative sum
-        x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0)
+        if self.relative_coords:
+            x[:, :, :2] = torch.cumsum(x[:, :, :2], dim=0) # Output: W x b x 2
         return x.transpose(0, 1)

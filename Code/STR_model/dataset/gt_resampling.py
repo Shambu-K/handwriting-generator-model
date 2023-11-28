@@ -40,7 +40,7 @@ def interpolate_stroke(points: np.ndarray, m: int, num_EoS_extra: int=5) -> list
     return interpolated_points.tolist()
 
 
-def resample_strokes(word_strokes: np.ndarray, m: int,  num_EoS_extra: int=5) -> np.ndarray:
+def resample_strokes(word_strokes: np.ndarray, m: int,  num_EoS_extra: int=10) -> np.ndarray:
     ''' Interpolate points along a word with multiple strokes to get m equidistant points describing the same strokes.
     
     Parameters:

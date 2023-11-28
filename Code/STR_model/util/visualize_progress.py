@@ -49,14 +49,30 @@ def visualize_progress(model, device, dataloader, epoch=0):
     display_img(img, title='Sample image')
     # plot_word_strokes(stroke, title='Ground truth strokes', split_strokes=True)
     # plot_word_strokes(pred, title='Predicted strokes', split_strokes=False)
-    plot_str_word_strokes(pred, title='Predicted strokes with directions', split_strokes=False)
-    animate_word(pred, speed=1, save_path=f'./predict_{epoch}.gif', title='Animated predicted strokes', split_strokes=False)
-    plot_dtw_path(pred, stroke, path, title=f'DTW Warping Path (distance={distance})')
+    plot_str_word_strokes(pred, title='Predicted strokes with directions', split_strokes=True)
+    animate_word(pred, speed=1, save_path=f'./train_outputs/predict_{epoch}.gif', title='Animated predicted strokes', split_strokes=True)
+    plot_dtw_path(pred, stroke, path, title=f'DTW Warping Path -> L2-distance = {distance}')
     
     
 def plot_losses(losses):
-    plt.plot(losses)
+    ''' Plot the losses (total, dtw, sos, eos)'''
+    fig, axs = plt.subplots(2, 2, figsize=(10, 10))
+    fig.suptitle('Training Losses', fontsize=16, fontweight='bold', y=0.93)
+    axs[0, 0].plot(losses[0])
+    axs[0, 0].set_title('Total Loss')
+    axs[0, 0].legend([f'Final Total Loss = {losses[0][-1]:.4f}'])
+
+    axs[0, 1].plot(losses[1])
+    axs[0, 1].set_title('DTW Loss')
+    axs[0, 1].legend([f'Final DTW Loss = {losses[1][-1]:.4f}'])
+    axs[1, 0].plot(losses[2])
+    axs[1, 0].set_title('SOS Loss')
+    axs[1, 0].legend([f'Final SOS Loss = {losses[2][-1]:.4f}'])
+    axs[1, 1].plot(losses[3])
+    axs[1, 1].set_title('EOS Loss')
+    axs[1, 1].legend([f'Final EOS Loss = {losses[3][-1]:.4f}'])
     plt.show()
+
     
 
 def main():

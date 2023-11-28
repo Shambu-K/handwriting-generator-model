@@ -25,3 +25,6 @@ images
 # Python intermediate files
 *.pyc
 __pycache__/
+
+# Output files
+Code/STR_model/train_outputs/*.gif
