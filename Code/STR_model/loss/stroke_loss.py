@@ -34,15 +34,14 @@ class STR_Loss_Identity(nn.Module):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.sos_weight = sos_weight
         self.dtw_loss = nn.L1Loss()
-        # self.sos_loss = nn.BCELoss(weight=torch.tensor([1.0, self.sos_weight], device=self.device))
-        # self.eos_loss = nn.BCELoss()
+        self.sos_loss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(self.sos_weight, device=self.device))
+        self.eos_loss = nn.BCEWithLogitsLoss()
         
     def forward(self, preds: torch.Tensor, targets: torch.Tensor):
         ''' pred: (batch_size, seq_len, 4)
             target: (batch_size, seq_len, 4)'''
         # Compute the losses for the different output features
         dtw_loss = self.dtw_loss(preds[:, :, :2], targets[:, :, :2])
-        # sos_loss = self.sos_loss(preds[:, :, 2], targets[:, :, 2])
-        # eos_loss = self.eos_loss(preds[:, :, 3], targets[:, :, 3])
-        return dtw_loss
-        # return dtw_loss + sos_loss + eos_loss
+        sos_loss = self.sos_loss(preds[:, :, 2], targets[:, :, 2])
+        eos_loss = self.eos_loss(preds[:, :, 3], targets[:, :, 3])
+        return dtw_loss + sos_loss + eos_loss, dtw_loss, sos_loss, eos_loss

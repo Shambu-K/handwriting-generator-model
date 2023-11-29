@@ -47,8 +47,9 @@ def plot_str_word_strokes(strokes, color='black', title='', split_strokes=True):
     # Plot the SoS and EoS points
     SoS_indices = np.where(strokes[:, -2] == 1)[0]
     EoS_indices = np.where(strokes[:, -1] == 1)[0]
-    ax.scatter(strokes[SoS_indices, 0], strokes[SoS_indices, 1], color='green', label='Start of stroke', s=10)
-    ax.scatter(strokes[EoS_indices, 0], strokes[EoS_indices, 1], color='red', label='End of stroke', s=10)
+    ax.scatter(strokes[:, 0], strokes[:, 1], color=color, s=2)
+    ax.scatter(strokes[SoS_indices, 0], strokes[SoS_indices, 1], color='green', label='Start of stroke', s=20)
+    ax.scatter(strokes[EoS_indices, 0], strokes[EoS_indices, 1], color='red', label='End of stroke', s=20)
 
     def plot_stroke_segment(ax, strokes, start, end):
         dx = np.diff(strokes[start:end, 0])
@@ -70,7 +71,7 @@ def plot_str_word_strokes(strokes, color='black', title='', split_strokes=True):
     plt.show()
 
 def animate_word(word_strokes, color='black', title='', speed=1, save_path=None, split_strokes=True):
-    ''' Animate the strokes of a word.'''
+    ''' Animate the strokes of a word '''
     fig, ax = plt.subplots()
     fig.suptitle(title)
     padding = 10

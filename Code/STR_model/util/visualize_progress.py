@@ -20,8 +20,8 @@ def predict(model, input: torch.Tensor, device: torch.device) -> torch.Tensor:
 def get_strokes_from_model_output(pred) -> list:
     ''' Get strokes from the model output.'''
     pred = pred.cpu().detach().numpy()
-    pred[:, -2] = np.round(pred[:, -2])
-    pred[:, -1] = np.round(pred[:, -1])
+    pred[:, -2] = np.round(torch.sigmoid(torch.from_numpy(pred[:, -2])).numpy())
+    pred[:, -1] = np.round(torch.sigmoid(torch.from_numpy(pred[:, -1])).numpy())
     
     return pred
 
