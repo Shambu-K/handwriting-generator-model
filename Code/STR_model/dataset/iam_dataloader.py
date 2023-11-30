@@ -12,8 +12,7 @@ from tqdm import tqdm
 
 class HandwritingDataset(Dataset):
     ''' Dataset class for the handwriting dataset. Loads the data into memory and preprocesses them based on expected batch size.'''
-    def __init__(self, root_dir, batch_size=5, device=torch.device('cuda'), transform=ToTensor(), max_allowed_width=400):
-        self.device = device
+    def __init__(self, root_dir, batch_size=5, transform=ToTensor(), max_allowed_width=300):
         self.transform = transform
         self.batch_size = batch_size
         self.root_dir = root_dir
@@ -57,19 +56,28 @@ class HandwritingDataset(Dataset):
             for j, image in enumerate(images):
                 assert isinstance(image, torch.Tensor), 'Image is not a tensor'
                 assert image.shape[0] == 1 and image.shape[1] == 60, f'Image shape is wrong: {image.shape}'
-                self.images[i+j] = torch.nn.functional.pad(image, (0, max_width-image.shape[2]), mode='constant', value=0).to(self.device)
+                self.images[i+j] = torch.nn.functional.pad(image, (0, max_width-image.shape[2]), mode='constant', value=0)
             for j, stroke in enumerate(strokes):
                 assert stroke.shape[1] == 4, 'Stroke shape is wrong'
-                self.strokes[i+j] = torch.tensor(resample_strokes(stroke, max_width, num_EoS_extra=5)).to(self.device)
+                self.strokes[i+j] = torch.tensor(resample_strokes(stroke, max_width, num_EoS_extra=5))
                 
+        
+        # Group the images and strokes into batches
+        self.image_batches = []
+        self.stroke_batches = []
+        for i in range(0, len(self), self.batch_size):
+            self.image_batches.append(torch.stack(self.images[i:i+self.batch_size]))
+            self.stroke_batches.append(torch.stack(self.strokes[i:i+self.batch_size]))
+        self.images = self.image_batches
+        self.strokes = self.stroke_batches
     
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = self.images[idx]
-        stroke_data = self.strokes[idx]
-        return image, stroke_data
+        image_batch = self.images[idx]
+        strokes_batch = self.strokes[idx]
+        return image_batch, strokes_batch
 
 # %%
 def test_dataset():
@@ -78,10 +86,11 @@ def test_dataset():
     dataset = HandwritingDataset(root_dir, batch_size)
     print(len(dataset))
     
-    train_loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=False) # Shuffle false since images are sorted by width
+    train_loader = DataLoader(dataset=dataset, shuffle=True)
     for batch, (image, stroke_data) in enumerate(train_loader):
-        if batch % 100 == 0:
-            print(f'Batch {batch:<4}: Width {image.shape[3]}')
+        # if batch % 100 == 0:
+            image, stroke_data = image.squeeze(0), stroke_data.squeeze(0)
+            print(f'Batch {batch:<4}: Shape {image.shape}, {stroke_data.shape}')
     
 if __name__ == '__main__':
     test_dataset()

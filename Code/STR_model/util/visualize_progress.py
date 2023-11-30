@@ -39,8 +39,8 @@ def visualize_progress(model, device, dataloader, epoch=0):
             break
     
     # Predict the output sequence
-    img = img[0].unsqueeze(0)
-    stroke = stroke[0].unsqueeze(0)
+    img = img[0][0].unsqueeze(0).to(device)
+    stroke = stroke[0][0].unsqueeze(0).to(device)
     pred = predict(model, img, device)
     pred = get_strokes_from_model_output(pred.squeeze(0))
     
@@ -91,8 +91,8 @@ def main():
     # model.load_state_dict(torch.load(model_path))
     
     data_path = '../../../DataSet/IAM-Online/Resized_Dataset/Train'
-    dataset = HandwritingDataset(data_path, 1, device, max_allowed_width=400)
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=False, drop_last=True)
+    dataset = HandwritingDataset(data_path, 1, max_allowed_width=100)
+    dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
     visualize_progress(model, device, dataloader)
 
 if __name__ == '__main__':
