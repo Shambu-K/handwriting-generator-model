@@ -1,0 +1,7 @@
+torch==2.1.0
+fastdtw==0.3.4
+matplotlib==3.5.1
+numpy==1.26.2
+tqdm==4.64.0
+torchvision==0.16.0
+Pillow==9.0.1
