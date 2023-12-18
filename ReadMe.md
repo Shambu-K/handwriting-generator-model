@@ -27,8 +27,8 @@ Inside the Code directory, we have 2 sub-directories:- [HWT-Model](https://githu
 
 * [model.py](https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/STR_model/model.py) - Contains the implementation of our model architecture
 * [loss](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/STR_model/loss) - Contains the implementation of our loss functions and helper functions for plotting
-* [train.ipynb](https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/STR_model/train.ipynb) - notebook with the train function to train our models
-
+* [train.ipynb](https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/STR_model/train.ipynb) - notebook with the train function to train our models. Train the model for at least 12 hours to obtain favourable results.
+* [demo_str.ipynb](https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/STR_model/demo_str.ipynb) - this notebook can be used to load the model weights and generate beautiful handwriting animations.
 
 
 
