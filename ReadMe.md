@@ -17,11 +17,10 @@ Our model takes the style of a writer and a prompt as input and animates the pro
 Stroke Recovery for Offline Handwritten Text](https://arxiv.org/abs/2105.11559)
 * [Handwriting Transformers](https://arxiv.org/abs/2104.03964)
 
-## Usage
+## STR Model - Usage
 
-The [HWT-Model](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/HWT-model) directory containts the model used in the Handwriting Transformers paper. The [STR-Model](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/STR_model) directory contains the STR-Model we built using the TRACE paper as reference, which generates the strokes from the image input and displays its animation.
+ The [STR-Model](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/STR_model) directory contains the STR-Model we built using the TRACE paper as reference, which generates the strokes from the image input and displays its animation.
 
-### STR Model
 
 * We used the [IAM-online dataset](https://fki.tic.heia-fr.ch/databases/iam-on-line-handwriting-database) to train our STR-Model.
 * [model.py](https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/STR_model/model.py) - Contains the implementation of our model architecture
