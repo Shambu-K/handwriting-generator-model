@@ -19,12 +19,11 @@ Stroke Recovery for Offline Handwritten Text](https://arxiv.org/abs/2105.11559)
 
 ## Usage
 
-Inside the Code directory, we have 2 sub-directories:- [HWT-Model](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/HWT-model) and [STR-Model](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/STR_model). Inside the first one is present the model used in the Handwriting Transformers paper. The second one contains the STR-Model we built using the TRACE paper for as reference, which generates the strokes from the image input and displays its animation. 
+Inside the Code directory, we have 2 sub-directories:- [HWT-Model](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/HWT-model) and [STR-Model](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/STR_model). Inside the first one is present the model used in the Handwriting Transformers paper. The second one contains the STR-Model we built using the TRACE paper as reference, which generates the strokes from the image input and displays its animation. 
 
 ### STR Model
 
 * We used the [IAM-online dataset](https://fki.tic.heia-fr.ch/databases/iam-on-line-handwriting-database) to train our STR-Model.
-
 * [model.py](https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/STR_model/model.py) - Contains the implementation of our model architecture
 * [loss](https://github.com/Shambu-K/handwriting-generator-model/tree/main/Code/STR_model/loss) - Contains the implementation of our loss functions and helper functions for plotting
 * [train.ipynb](https://github.com/Shambu-K/handwriting-generator-model/blob/main/Code/STR_model/train.ipynb) - notebook with the train function to train our models. Train the model for at least 12 hours to obtain favourable results.
